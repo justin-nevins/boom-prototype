@@ -6,7 +6,11 @@
       "Bash(npx vercel --version)",
       "Bash(vercel env:*)",
       "Bash(npx vercel:*)",
-      "Bash(echo \"$VERCEL_TOKEN:0:10...\")"
+      "Bash(echo \"$VERCEL_TOKEN:0:10...\")",
+      "Bash(ls:*)",
+      "Bash(npx supabase:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
