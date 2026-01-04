@@ -51,6 +51,11 @@ func main() {
 		aiServiceURL = "http://localhost:8081"
 	}
 
+	// Initialize database
+	if err := initDB(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+
 	roomClient = lksdk.NewRoomServiceClient(livekitHost, apiKey, apiSecret)
 
 	app := fiber.New()
@@ -75,6 +80,11 @@ func main() {
 	app.Post("/api/rooms", createRoom)
 	app.Post("/api/token", getToken)
 	app.Get("/api/rooms/:id", getRoom)
+
+	// Notes API
+	app.Post("/api/meetings/:room/notes", saveNotesHandler)
+	app.Get("/api/meetings/:room/notes", getNotesHandler)
+	app.Get("/api/meetings", listMeetingsHandler)
 
 	// WebSocket for transcription broadcast
 	app.Use("/ws", func(c *fiber.Ctx) error {
@@ -248,4 +258,51 @@ func broadcastToRoom(room string, msg []byte) {
 
 func generateRoomName() string {
 	return "room-" + time.Now().Format("20060102-150405")
+}
+
+// Notes API handlers
+
+type SaveNotesRequest struct {
+	Markdown     string `json:"markdown"`
+	Model        string `json:"model"`
+	InputTokens  int    `json:"inputTokens"`
+	OutputTokens int    `json:"outputTokens"`
+}
+
+func saveNotesHandler(c *fiber.Ctx) error {
+	room := c.Params("room")
+	var req SaveNotesRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	notes, err := SaveNotes(room, req.Markdown, req.Model, req.InputTokens, req.OutputTokens)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"status": "saved",
+		"id":     notes.ID,
+	})
+}
+
+func getNotesHandler(c *fiber.Ctx) error {
+	room := c.Params("room")
+
+	notes, err := GetNotesByRoom(room)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Notes not found"})
+	}
+
+	return c.JSON(notes)
+}
+
+func listMeetingsHandler(c *fiber.Ctx) error {
+	meetings, err := ListMeetingsWithNotes(20)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(meetings)
 }

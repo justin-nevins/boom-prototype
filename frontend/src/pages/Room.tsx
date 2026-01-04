@@ -9,6 +9,7 @@ import '@livekit/components-styles';
 import Transcription from '../components/Transcription';
 import ErrorBoundary from '../components/ErrorBoundary';
 import BackgroundToggle from '../components/BackgroundToggle';
+import MeetingNotesButton from '../components/MeetingNotesButton';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
@@ -93,6 +94,7 @@ export default function Room() {
               <span className="text-slate-300 text-sm">{roomName}</span>
             </div>
             <div className="flex items-center gap-2">
+              <MeetingNotesButton roomName={roomName!} />
               <BackgroundToggle />
               <CopyLinkButton roomName={roomName!} />
             </div>

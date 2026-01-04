@@ -5,6 +5,9 @@ livekit-api>=0.6.0
 # Transcription
 deepgram-sdk>=3.7.0,<4.0.0
 
+# AI Notes Generation
+anthropic>=0.39.0
+
 # Alternative: Local Whisper (uncomment if not using Deepgram)
 # faster-whisper>=1.0.0
 
