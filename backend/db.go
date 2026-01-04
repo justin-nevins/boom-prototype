@@ -176,3 +176,102 @@ func ListMeetingsWithNotes(limit int) ([]map[string]interface{}, error) {
 	}
 	return results, nil
 }
+
+// Recording represents a meeting recording for batch transcription
+type Recording struct {
+	ID          int64      `json:"id"`
+	MeetingID   int64      `json:"meetingId"`
+	EgressID    string     `json:"egressId"`
+	Status      string     `json:"status"` // recording, processing, completed, failed
+	AudioURL    string     `json:"audioUrl,omitempty"`
+	DurationMS  int64      `json:"durationMs,omitempty"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+}
+
+// CreateRecording inserts a new recording record
+func CreateRecording(meetingID int64, egressID string) (*Recording, error) {
+	result, err := db.Exec(
+		"INSERT INTO recordings (meeting_id, egress_id, status) VALUES (?, ?, 'recording')",
+		meetingID, egressID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, _ := result.LastInsertId()
+	return &Recording{
+		ID:        id,
+		MeetingID: meetingID,
+		EgressID:  egressID,
+		Status:    "recording",
+		CreatedAt: time.Now(),
+	}, nil
+}
+
+// GetRecordingByEgressID retrieves a recording by egress ID
+func GetRecordingByEgressID(egressID string) (*Recording, error) {
+	var r Recording
+	var audioURL sql.NullString
+	var durationMS sql.NullInt64
+	var completedAt sql.NullTime
+
+	err := db.QueryRow(
+		"SELECT id, meeting_id, egress_id, status, audio_url, duration_ms, created_at, completed_at FROM recordings WHERE egress_id = ?",
+		egressID,
+	).Scan(&r.ID, &r.MeetingID, &r.EgressID, &r.Status, &audioURL, &durationMS, &r.CreatedAt, &completedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if audioURL.Valid {
+		r.AudioURL = audioURL.String
+	}
+	if durationMS.Valid {
+		r.DurationMS = durationMS.Int64
+	}
+	if completedAt.Valid {
+		r.CompletedAt = &completedAt.Time
+	}
+	return &r, nil
+}
+
+// GetActiveRecordingByMeeting retrieves the active recording for a meeting
+func GetActiveRecordingByMeeting(meetingID int64) (*Recording, error) {
+	var r Recording
+	var audioURL sql.NullString
+	var durationMS sql.NullInt64
+	var completedAt sql.NullTime
+
+	err := db.QueryRow(
+		"SELECT id, meeting_id, egress_id, status, audio_url, duration_ms, created_at, completed_at FROM recordings WHERE meeting_id = ? AND status = 'recording' ORDER BY created_at DESC LIMIT 1",
+		meetingID,
+	).Scan(&r.ID, &r.MeetingID, &r.EgressID, &r.Status, &audioURL, &durationMS, &r.CreatedAt, &completedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	if audioURL.Valid {
+		r.AudioURL = audioURL.String
+	}
+	if durationMS.Valid {
+		r.DurationMS = durationMS.Int64
+	}
+	if completedAt.Valid {
+		r.CompletedAt = &completedAt.Time
+	}
+	return &r, nil
+}
+
+// UpdateRecordingStatus updates a recording's status
+func UpdateRecordingStatus(egressID, status string, audioURL string, durationMS int64) error {
+	if status == "completed" || status == "failed" {
+		_, err := db.Exec(
+			"UPDATE recordings SET status = ?, audio_url = ?, duration_ms = ?, completed_at = CURRENT_TIMESTAMP WHERE egress_id = ?",
+			status, audioURL, durationMS, egressID,
+		)
+		return err
+	}
+	_, err := db.Exec("UPDATE recordings SET status = ? WHERE egress_id = ?", status, egressID)
+	return err
+}

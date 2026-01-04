@@ -1,358 +1,280 @@
 """
-Boom AI Transcription Service
+Boom AI Service - Batch Transcription
 
-Joins a LiveKit room as a bot, captures audio, and sends real-time
-transcriptions to the backend WebSocket.
+Downloads meeting recordings, transcribes with Deepgram batch API,
+and generates notes with Claude.
 """
 
 import asyncio
 import os
-import json
 import logging
+import tempfile
 from datetime import datetime
 from dotenv import load_dotenv
-from livekit import api, rtc
-from deepgram import DeepgramClient, LiveOptions, LiveTranscriptionEvents
+from deepgram import DeepgramClient, PrerecordedOptions
 import aiohttp
+from aiohttp import web
 
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("transcription-bot")
+logger = logging.getLogger("ai-service")
 
 # Configuration
-LIVEKIT_URL = os.getenv("LIVEKIT_URL")
-LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY")
-LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET")
 DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
-BACKEND_WS_URL = os.getenv("BACKEND_WS_URL", "ws://localhost:8080")
+BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://localhost:8080")
 
 
 def validate_env():
     """Validate required environment variables at startup."""
-    required = ["LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET", "DEEPGRAM_API_KEY"]
+    required = ["DEEPGRAM_API_KEY", "ANTHROPIC_API_KEY"]
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         raise RuntimeError(f"Missing environment variables: {missing}")
 
 
-class ParticipantTranscriber:
-    """Handles transcription for a single participant."""
-
-    def __init__(self, participant_id: str, deepgram_client: DeepgramClient, send_callback):
-        self.participant_id = participant_id
-        self.deepgram = deepgram_client
-        self.send_callback = send_callback
-        self.dg_connection = None
-        self.frame_count = 0
-
-    async def start(self):
-        """Start Deepgram connection for this participant."""
-        self.dg_connection = self.deepgram.listen.asyncwebsocket.v("1")
-
-        participant_id = self.participant_id
-        send_callback = self.send_callback
-
-        # Use sync wrappers to avoid coroutine issues with Deepgram SDK
-        def on_message(client, result, **kwargs):
-            try:
-                if not result.is_final:
-                    return
-                transcript = result.channel.alternatives[0].transcript
-                if transcript.strip():
-                    logger.info(f"[{participant_id}] {transcript[:60]}")
-                    asyncio.create_task(send_callback(transcript, participant_id))
-            except Exception as e:
-                logger.error(f"Error processing transcript for {participant_id}: {e}")
-
-        def on_error(client, error, **kwargs):
-            logger.error(f"Deepgram error for {participant_id}: {error}")
-
-        self.dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
-        self.dg_connection.on(LiveTranscriptionEvents.Error, on_error)
-
-        # LiveKit sends 48kHz 16-bit PCM audio
-        options = LiveOptions(
-            model="nova-2",
-            language="en",
-            smart_format=True,
-            interim_results=False,
-            utterance_end_ms=1500,
-            vad_events=True,
-            endpointing=500,
-            encoding="linear16",
-            sample_rate=48000,
-            channels=1,
-        )
-
-        result = await self.dg_connection.start(options)
-        if not result:
-            logger.error(f"Failed to start Deepgram for {participant_id}")
-            return False
-        logger.info(f"Started Deepgram for participant: {participant_id}")
-        return True
-
-    async def send_audio(self, audio_data: bytes):
-        """Send audio frame to Deepgram."""
-        if self.dg_connection:
-            await self.dg_connection.send(audio_data)
-            self.frame_count += 1
-
-    async def stop(self):
-        """Stop Deepgram connection."""
-        if self.dg_connection:
-            await self.dg_connection.finish()
-            logger.info(f"Stopped Deepgram for participant: {self.participant_id} (processed {self.frame_count} frames)")
+async def download_audio(url: str) -> bytes:
+    """Download audio file from URL."""
+    logger.info(f"Downloading audio from: {url}")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status != 200:
+                raise Exception(f"Failed to download audio: {resp.status}")
+            return await resp.read()
 
 
-class TranscriptionBot:
-    def __init__(self, room_name: str):
-        self.room_name = room_name
-        self.room = rtc.Room()
-        self.deepgram = DeepgramClient(DEEPGRAM_API_KEY)
-        self.backend_ws = None
-        self.participant_transcribers: dict[str, ParticipantTranscriber] = {}
-        self._session = None
-        self.full_transcript: list[dict] = []  # Store all transcripts for note generation
+async def transcribe_audio(audio_data: bytes) -> list[dict]:
+    """
+    Transcribe audio using Deepgram batch API.
 
-    async def connect(self):
-        """Connect to LiveKit room and start transcription."""
-        # Generate bot token
-        token = api.AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
-        token.with_identity("transcription-bot")
-        token.with_name("Transcription Bot")
-        token.with_grants(api.VideoGrants(
-            room_join=True,
-            room=self.room_name,
-        ))
-        jwt = token.to_jwt()
+    Returns list of transcript entries with speaker diarization.
+    """
+    logger.info(f"Transcribing {len(audio_data)} bytes of audio")
 
-        # Connect to backend WebSocket
-        await self.connect_backend_ws()
+    deepgram = DeepgramClient(DEEPGRAM_API_KEY)
 
-        # Setup LiveKit event handlers
-        def on_track_subscribed_sync(track, publication, participant):
-            asyncio.create_task(self.on_track_subscribed(track, publication, participant))
+    options = PrerecordedOptions(
+        model="nova-2",
+        language="en",
+        smart_format=True,
+        diarize=True,  # Enable speaker diarization
+        punctuate=True,
+        paragraphs=True,
+    )
 
-        def on_track_unsubscribed_sync(track, publication, participant):
-            asyncio.create_task(self.on_track_unsubscribed(track, publication, participant))
+    source = {"buffer": audio_data, "mimetype": "audio/ogg"}
 
-        def on_disconnected_sync():
-            asyncio.create_task(self.on_disconnected())
+    response = await asyncio.get_event_loop().run_in_executor(
+        None,
+        lambda: deepgram.listen.rest.v("1").transcribe_file(source, options)
+    )
 
-        self.room.on("track_subscribed", on_track_subscribed_sync)
-        self.room.on("track_unsubscribed", on_track_unsubscribed_sync)
-        self.room.on("disconnected", on_disconnected_sync)
+    # Extract transcript with speaker info
+    transcript = []
 
-        # Connect to LiveKit
-        logger.info(f"Connecting to room: {self.room_name}")
-        await self.room.connect(LIVEKIT_URL, jwt)
-        logger.info("Connected to LiveKit room")
+    results = response.results
+    if results and results.channels:
+        channel = results.channels[0]
+        if channel.alternatives:
+            alt = channel.alternatives[0]
 
-    async def connect_backend_ws(self):
-        """Connect to backend WebSocket for broadcasting transcriptions."""
-        ws_url = f"{BACKEND_WS_URL}/ws/transcription/{self.room_name}"
-        logger.info(f"Connecting to backend WebSocket: {ws_url}")
+            # If we have word-level data with speakers
+            if alt.words:
+                current_speaker = None
+                current_text = []
+                current_start = 0
 
-        self._session = aiohttp.ClientSession()
-        self.backend_ws = await self._session.ws_connect(ws_url)
-        logger.info("Connected to backend WebSocket")
+                for word in alt.words:
+                    speaker = f"Speaker {word.speaker}" if hasattr(word, 'speaker') else "Speaker"
 
-    async def on_track_subscribed(
-        self,
-        track: rtc.Track,
-        publication: rtc.RemoteTrackPublication,
-        participant: rtc.RemoteParticipant,
-    ):
-        """Handle new audio track subscription."""
-        if track.kind != rtc.TrackKind.KIND_AUDIO:
-            return
+                    if speaker != current_speaker:
+                        # Save previous segment
+                        if current_text:
+                            transcript.append({
+                                "speaker": current_speaker or "Speaker",
+                                "text": " ".join(current_text),
+                                "timestamp": format_timestamp(current_start)
+                            })
+                        current_speaker = speaker
+                        current_text = [word.punctuated_word or word.word]
+                        current_start = word.start
+                    else:
+                        current_text.append(word.punctuated_word or word.word)
 
-        participant_id = participant.identity
-        logger.info(f"Subscribed to audio from: {participant_id}")
+                # Save last segment
+                if current_text:
+                    transcript.append({
+                        "speaker": current_speaker or "Speaker",
+                        "text": " ".join(current_text),
+                        "timestamp": format_timestamp(current_start)
+                    })
 
-        # Create transcriber for this participant if not exists
-        if participant_id not in self.participant_transcribers:
-            transcriber = ParticipantTranscriber(
-                participant_id,
-                self.deepgram,
-                self.send_transcription
-            )
-            await transcriber.start()
-            self.participant_transcribers[participant_id] = transcriber
+            # Fallback: use paragraph-level if no word data
+            elif alt.paragraphs and alt.paragraphs.paragraphs:
+                for para in alt.paragraphs.paragraphs:
+                    speaker = f"Speaker {para.speaker}" if hasattr(para, 'speaker') else "Speaker"
+                    for sentence in para.sentences:
+                        transcript.append({
+                            "speaker": speaker,
+                            "text": sentence.text,
+                            "timestamp": format_timestamp(sentence.start)
+                        })
 
-        transcriber = self.participant_transcribers[participant_id]
-        audio_stream = rtc.AudioStream(track)
+            # Last fallback: just use the full transcript
+            else:
+                transcript.append({
+                    "speaker": "Speaker",
+                    "text": alt.transcript,
+                    "timestamp": format_timestamp(0)
+                })
 
-        async for frame_event in audio_stream:
-            await transcriber.send_audio(frame_event.frame.data.tobytes())
+    logger.info(f"Transcribed into {len(transcript)} segments")
+    return transcript
 
-    async def on_track_unsubscribed(
-        self,
-        track: rtc.Track,
-        publication: rtc.RemoteTrackPublication,
-        participant: rtc.RemoteParticipant,
-    ):
-        """Handle audio track unsubscription."""
-        if track.kind != rtc.TrackKind.KIND_AUDIO:
-            return
 
-        participant_id = participant.identity
-        if participant_id in self.participant_transcribers:
-            await self.participant_transcribers[participant_id].stop()
-            del self.participant_transcribers[participant_id]
-            logger.info(f"Removed transcriber for: {participant_id}")
+def format_timestamp(seconds: float) -> str:
+    """Format seconds into ISO timestamp."""
+    return datetime.utcfromtimestamp(seconds).strftime("%H:%M:%S")
 
-    async def send_transcription(self, text: str, speaker: str):
-        """Send transcription to backend WebSocket and store for notes."""
-        # Store in full transcript for note generation
-        self.full_transcript.append({
-            "speaker": speaker,
-            "text": text,
-            "timestamp": datetime.utcnow().isoformat()
-        })
 
-        # Broadcast to frontend via backend WebSocket
-        if self.backend_ws:
-            message = json.dumps({
-                "text": text,
-                "speaker": speaker,
-                "room": self.room_name,
-            })
-            await self.backend_ws.send_str(message)
-
-    async def on_disconnected(self):
-        """Handle room disconnection."""
-        logger.info("Disconnected from room")
-        await self.cleanup()
-
-    async def cleanup(self):
-        """Cleanup connections."""
-        # Stop all participant transcribers
-        for transcriber in self.participant_transcribers.values():
-            await transcriber.stop()
-        self.participant_transcribers.clear()
-
-        if self.backend_ws:
-            await self.backend_ws.close()
-        if self._session:
-            await self._session.close()
-        await self.room.disconnect()
+async def update_backend_status(room_name: str, egress_id: str, status: str, notes_markdown: str = None):
+    """Update backend with transcription status."""
+    async with aiohttp.ClientSession() as session:
+        if status == "completed" and notes_markdown:
+            # Save notes to backend
+            async with session.post(
+                f"{BACKEND_API_URL}/api/meetings/{room_name}/notes",
+                json={
+                    "markdown": notes_markdown,
+                    "model": "claude-sonnet-4-20250514",
+                    "inputTokens": 0,
+                    "outputTokens": 0
+                }
+            ) as resp:
+                if resp.status == 200:
+                    logger.info(f"Notes saved to backend for room {room_name}")
+                else:
+                    logger.error(f"Failed to save notes: {await resp.text()}")
 
 
 def run_service():
-    """Run as HTTP service that spawns bots on demand."""
-    from aiohttp import web
+    """Run as HTTP service."""
     from notes_generator import generate_notes
 
-    bots = {}
-    BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://localhost:8080")
+    processing_tasks = {}  # Track in-progress transcriptions
 
     async def health(request):
         """Health check endpoint."""
         return web.json_response({
             "status": "ok",
-            "service": "ai",
-            "bots_active": len(bots)
+            "service": "ai-batch",
+            "processing": len(processing_tasks)
         })
 
-    async def join_room(request):
+    async def transcribe_recording(request):
+        """
+        Transcribe a recording and generate notes.
+
+        Expected payload:
+        {
+            "room_name": "room-xxx",
+            "audio_url": "https://...",
+            "egress_id": "EG_xxx"
+        }
+        """
         data = await request.json()
         room_name = data.get("room_name")
+        audio_url = data.get("audio_url")
+        egress_id = data.get("egress_id")
 
-        if room_name in bots:
-            return web.json_response({"status": "already_joined"})
+        if not all([room_name, audio_url, egress_id]):
+            return web.json_response({"error": "Missing required fields"}, status=400)
 
-        bot = TranscriptionBot(room_name)
-        bots[room_name] = bot
-        asyncio.create_task(bot.connect())
+        # Check if already processing
+        if egress_id in processing_tasks:
+            return web.json_response({"status": "already_processing"})
 
-        return web.json_response({"status": "joined", "room": room_name})
+        # Start async processing
+        async def process():
+            try:
+                processing_tasks[egress_id] = "downloading"
+
+                # Download audio
+                audio_data = await download_audio(audio_url)
+
+                processing_tasks[egress_id] = "transcribing"
+
+                # Transcribe with Deepgram
+                transcript = await transcribe_audio(audio_data)
+
+                processing_tasks[egress_id] = "generating_notes"
+
+                # Generate notes with Claude
+                logger.info(f"Generating notes for {room_name} with {len(transcript)} entries")
+                result = await generate_notes(transcript)
+
+                processing_tasks[egress_id] = "saving"
+
+                # Save to backend
+                await update_backend_status(room_name, egress_id, "completed", result["markdown"])
+
+                logger.info(f"Completed processing for {room_name}")
+
+            except Exception as e:
+                logger.error(f"Error processing {room_name}: {e}")
+                await update_backend_status(room_name, egress_id, "failed")
+            finally:
+                if egress_id in processing_tasks:
+                    del processing_tasks[egress_id]
+
+        asyncio.create_task(process())
+
+        return web.json_response({
+            "status": "processing",
+            "room_name": room_name,
+            "egress_id": egress_id
+        })
+
+    async def get_status(request):
+        """Get processing status for an egress."""
+        egress_id = request.query.get("egress_id")
+        if egress_id and egress_id in processing_tasks:
+            return web.json_response({
+                "status": "processing",
+                "stage": processing_tasks[egress_id]
+            })
+        return web.json_response({"status": "not_found"})
+
+    # Legacy endpoint for backwards compatibility (returns error)
+    async def join_room(request):
+        return web.json_response({
+            "error": "Live transcription disabled. Use batch transcription via stop-recording endpoint.",
+            "status": "deprecated"
+        }, status=410)
 
     async def leave_room(request):
-        data = await request.json()
-        room_name = data.get("room_name")
-
-        if room_name in bots:
-            await bots[room_name].cleanup()
-            del bots[room_name]
-            return web.json_response({"status": "left"})
-
-        return web.json_response({"status": "not_found"}, status=404)
+        return web.json_response({"status": "deprecated"}, status=410)
 
     async def generate_notes_handler(request):
-        """Generate meeting notes from transcript using Claude."""
-        data = await request.json()
-        room_name = data.get("room_name")
-
-        if room_name not in bots:
-            return web.json_response({"error": "Bot not active for this room"}, status=404)
-
-        bot = bots[room_name]
-        transcript = bot.full_transcript
-
-        if not transcript:
-            return web.json_response({"error": "No transcript available"}, status=400)
-
-        try:
-            # Generate notes with Claude
-            logger.info(f"Generating notes for room {room_name} with {len(transcript)} entries")
-            result = await generate_notes(transcript)
-
-            # Save notes to backend
-            async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    f"{BACKEND_API_URL}/api/meetings/{room_name}/notes",
-                    json={
-                        "markdown": result["markdown"],
-                        "model": result["model"],
-                        "inputTokens": result["usage"]["input_tokens"],
-                        "outputTokens": result["usage"]["output_tokens"]
-                    }
-                ) as resp:
-                    if resp.status != 200:
-                        logger.warning(f"Failed to save notes to backend: {await resp.text()}")
-
-            return web.json_response({
-                "status": "success",
-                "markdown": result["markdown"],
-                "usage": result["usage"]
-            })
-
-        except Exception as e:
-            logger.error(f"Error generating notes: {e}")
-            return web.json_response({"error": str(e)}, status=500)
+        return web.json_response({
+            "error": "Use transcribe-recording endpoint instead",
+            "status": "deprecated"
+        }, status=410)
 
     app = web.Application()
     app.router.add_get("/health", health)
+    app.router.add_post("/transcribe-recording", transcribe_recording)
+    app.router.add_get("/status", get_status)
+
+    # Legacy endpoints (deprecated)
     app.router.add_post("/join", join_room)
     app.router.add_post("/leave", leave_room)
     app.router.add_post("/generate-notes", generate_notes_handler)
 
-    logger.info("Starting transcription service on port 8081")
+    logger.info("Starting batch transcription service on port 8081")
     web.run_app(app, port=8081)
 
 
-async def run_single_room(room_name: str):
-    """Run for a specific room."""
-    bot = TranscriptionBot(room_name)
-    await bot.connect()
-
-    # Keep running
-    try:
-        while True:
-            await asyncio.sleep(1)
-    except KeyboardInterrupt:
-        await bot.cleanup()
-
-
 if __name__ == "__main__":
-    import sys
-
-    # Validate environment on startup
     validate_env()
-
-    if len(sys.argv) < 2:
-        run_service()
-    else:
-        asyncio.run(run_single_room(sys.argv[1]))
+    run_service()

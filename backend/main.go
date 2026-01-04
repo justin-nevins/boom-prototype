@@ -26,6 +26,7 @@ var (
 	apiSecret      string
 	aiServiceURL   string
 	roomClient     *lksdk.RoomServiceClient
+	egressClient   *lksdk.EgressClient
 	transcriptWS   = make(map[string]map[*websocket.Conn]bool) // room -> connections
 	transcriptLock sync.RWMutex
 )
@@ -57,6 +58,7 @@ func main() {
 	}
 
 	roomClient = lksdk.NewRoomServiceClient(livekitHost, apiKey, apiSecret)
+	egressClient = lksdk.NewEgressClient(livekitHost, apiKey, apiSecret)
 
 	app := fiber.New()
 
@@ -85,6 +87,11 @@ func main() {
 	app.Post("/api/meetings/:room/notes", saveNotesHandler)
 	app.Get("/api/meetings/:room/notes", getNotesHandler)
 	app.Get("/api/meetings", listMeetingsHandler)
+
+	// Egress (recording) API - for batch transcription pivot
+	app.Post("/api/meetings/:room/start-recording", startRecordingHandler)
+	app.Post("/api/meetings/:room/stop-recording", stopRecordingHandler)
+	app.Get("/api/meetings/:room/recording-status", getRecordingStatusHandler)
 
 	// WebSocket for transcription broadcast
 	app.Use("/ws", func(c *fiber.Ctx) error {
@@ -175,26 +182,147 @@ func getToken(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// Trigger transcription bot to join room
-	triggerTranscriptionBot(req.RoomName)
-
 	return c.JSON(TokenResponse{Token: token})
 }
 
-func triggerTranscriptionBot(roomName string) {
-	if aiServiceURL == "" {
-		return
-	}
-	go func() {
-		payload := []byte(`{"room_name": "` + roomName + `"}`)
-		resp, err := http.Post(aiServiceURL+"/join", "application/json", bytes.NewBuffer(payload))
+// Egress (Recording) Handlers
+
+func startRecordingHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	// Get or create meeting
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		meeting, err = CreateMeeting(roomName, "")
 		if err != nil {
-			log.Printf("Failed to trigger transcription bot: %v", err)
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to create meeting"})
+		}
+	}
+
+	// Check if already recording
+	existingRec, _ := GetActiveRecordingByMeeting(meeting.ID)
+	if existingRec != nil {
+		return c.JSON(fiber.Map{
+			"status":   "already_recording",
+			"egressId": existingRec.EgressID,
+		})
+	}
+
+	// Start room composite egress (audio only for transcription)
+	egressReq := &livekit.RoomCompositeEgressRequest{
+		RoomName: roomName,
+		AudioOnly: true,
+		Output: &livekit.RoomCompositeEgressRequest_File{
+			File: &livekit.EncodedFileOutput{
+				FileType: livekit.EncodedFileType_OGG,
+				Filepath: roomName + "-{time}.ogg",
+			},
+		},
+	}
+
+	info, err := egressClient.StartRoomCompositeEgress(context.Background(), egressReq)
+	if err != nil {
+		log.Printf("Failed to start egress: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Save recording to database
+	rec, err := CreateRecording(meeting.ID, info.EgressId)
+	if err != nil {
+		log.Printf("Failed to save recording: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to save recording"})
+	}
+
+	log.Printf("Started recording for room %s, egress ID: %s", roomName, info.EgressId)
+
+	return c.JSON(fiber.Map{
+		"status":      "recording",
+		"egressId":    info.EgressId,
+		"recordingId": rec.ID,
+	})
+}
+
+func stopRecordingHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	// Get meeting
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Meeting not found"})
+	}
+
+	// Get active recording
+	rec, err := GetActiveRecordingByMeeting(meeting.ID)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "No active recording"})
+	}
+
+	// Stop egress
+	info, err := egressClient.StopEgress(context.Background(), &livekit.StopEgressRequest{
+		EgressId: rec.EgressID,
+	})
+	if err != nil {
+		log.Printf("Failed to stop egress: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Extract file URL from egress result
+	var audioURL string
+	var durationMS int64
+	if info.GetFile() != nil {
+		audioURL = info.GetFile().Location
+		durationMS = info.GetFile().Duration / 1000000 // nanoseconds to ms
+	}
+
+	// Update recording status
+	UpdateRecordingStatus(rec.EgressID, "processing", audioURL, durationMS)
+
+	log.Printf("Stopped recording for room %s, audio URL: %s", roomName, audioURL)
+
+	// Trigger batch transcription in AI service
+	go func() {
+		if aiServiceURL == "" {
+			return
+		}
+		payload := []byte(`{"room_name": "` + roomName + `", "audio_url": "` + audioURL + `", "egress_id": "` + rec.EgressID + `"}`)
+		resp, err := http.Post(aiServiceURL+"/transcribe-recording", "application/json", bytes.NewBuffer(payload))
+		if err != nil {
+			log.Printf("Failed to trigger batch transcription: %v", err)
+			UpdateRecordingStatus(rec.EgressID, "failed", audioURL, durationMS)
 			return
 		}
 		defer resp.Body.Close()
-		log.Printf("Transcription bot triggered for room: %s", roomName)
+		log.Printf("Batch transcription triggered for room: %s", roomName)
 	}()
+
+	return c.JSON(fiber.Map{
+		"status":     "processing",
+		"egressId":   rec.EgressID,
+		"audioUrl":   audioURL,
+		"durationMs": durationMS,
+	})
+}
+
+func getRecordingStatusHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Meeting not found"})
+	}
+
+	rec, err := GetActiveRecordingByMeeting(meeting.ID)
+	if err != nil {
+		// Check for completed recordings
+		return c.JSON(fiber.Map{"status": "no_recording"})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":     rec.Status,
+		"egressId":   rec.EgressID,
+		"audioUrl":   rec.AudioURL,
+		"durationMs": rec.DurationMS,
+	})
 }
 
 func getRoom(c *fiber.Ctx) error {
