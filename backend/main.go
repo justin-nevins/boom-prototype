@@ -88,6 +88,11 @@ func main() {
 	app.Get("/api/meetings/:room/notes", getNotesHandler)
 	app.Get("/api/meetings", listMeetingsHandler)
 
+	// Email subscription API
+	app.Post("/api/meetings/:room/subscribe-email", subscribeEmailHandler)
+	app.Get("/api/meetings/:room/email-subscriptions", getEmailSubscriptionsHandler)
+	app.Delete("/api/meetings/:room/unsubscribe-email", unsubscribeEmailHandler)
+
 	// Egress (recording) API - for batch transcription pivot
 	app.Post("/api/meetings/:room/start-recording", startRecordingHandler)
 	app.Post("/api/meetings/:room/stop-recording", stopRecordingHandler)
@@ -409,6 +414,9 @@ func saveNotesHandler(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	// Trigger email workflow in background (non-blocking)
+	go TriggerEmailWorkflow(room, req.Markdown)
+
 	return c.JSON(fiber.Map{
 		"status": "saved",
 		"id":     notes.ID,
@@ -433,4 +441,69 @@ func listMeetingsHandler(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(meetings)
+}
+
+// Email subscription handlers
+
+type SubscribeEmailRequest struct {
+	Email           string `json:"email"`
+	ParticipantName string `json:"participantName"`
+}
+
+func subscribeEmailHandler(c *fiber.Ctx) error {
+	room := c.Params("room")
+	var req SubscribeEmailRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	if req.Email == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "Email is required"})
+	}
+
+	sub, err := CreateEmailSubscription(room, req.ParticipantName, req.Email)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"status": "subscribed",
+		"id":     sub.ID,
+		"email":  sub.Email,
+	})
+}
+
+func getEmailSubscriptionsHandler(c *fiber.Ctx) error {
+	room := c.Params("room")
+
+	subs, err := GetEmailSubscriptionsByRoom(room)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"subscriptions": []EmailSubscription{},
+			"count":         0,
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"subscriptions": subs,
+		"count":         len(subs),
+	})
+}
+
+type UnsubscribeEmailRequest struct {
+	Email string `json:"email"`
+}
+
+func unsubscribeEmailHandler(c *fiber.Ctx) error {
+	room := c.Params("room")
+	var req UnsubscribeEmailRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	if err := DeleteEmailSubscription(room, req.Email); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"status": "unsubscribed"})
 }

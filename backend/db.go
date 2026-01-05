@@ -275,3 +275,79 @@ func UpdateRecordingStatus(egressID, status string, audioURL string, durationMS 
 	_, err := db.Exec("UPDATE recordings SET status = ? WHERE egress_id = ?", status, egressID)
 	return err
 }
+
+// EmailSubscription represents a participant's email subscription for meeting summaries
+type EmailSubscription struct {
+	ID              int64     `json:"id"`
+	MeetingID       int64     `json:"meetingId"`
+	ParticipantName string    `json:"participantName"`
+	Email           string    `json:"email"`
+	CreatedAt       time.Time `json:"createdAt"`
+}
+
+// CreateEmailSubscription adds an email subscription for a meeting
+func CreateEmailSubscription(roomName, participantName, email string) (*EmailSubscription, error) {
+	// Get or create meeting
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		meeting, err = CreateMeeting(roomName, "")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	result, err := db.Exec(
+		"INSERT INTO email_subscriptions (meeting_id, participant_name, email) VALUES (?, ?, ?) ON CONFLICT(meeting_id, email) DO UPDATE SET participant_name = ?",
+		meeting.ID, participantName, email, participantName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, _ := result.LastInsertId()
+	return &EmailSubscription{
+		ID:              id,
+		MeetingID:       meeting.ID,
+		ParticipantName: participantName,
+		Email:           email,
+		CreatedAt:       time.Now(),
+	}, nil
+}
+
+// GetEmailSubscriptionsByRoom retrieves all email subscriptions for a room
+func GetEmailSubscriptionsByRoom(roomName string) ([]EmailSubscription, error) {
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(
+		"SELECT id, meeting_id, participant_name, email, created_at FROM email_subscriptions WHERE meeting_id = ?",
+		meeting.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var subs []EmailSubscription
+	for rows.Next() {
+		var s EmailSubscription
+		if err := rows.Scan(&s.ID, &s.MeetingID, &s.ParticipantName, &s.Email, &s.CreatedAt); err != nil {
+			continue
+		}
+		subs = append(subs, s)
+	}
+	return subs, nil
+}
+
+// DeleteEmailSubscription removes an email subscription
+func DeleteEmailSubscription(roomName, email string) error {
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("DELETE FROM email_subscriptions WHERE meeting_id = ? AND email = ?", meeting.ID, email)
+	return err
+}

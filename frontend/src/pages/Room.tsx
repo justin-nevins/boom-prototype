@@ -11,6 +11,7 @@ import { VideoPresets, RoomOptions } from 'livekit-client';
 import ErrorBoundary from '../components/ErrorBoundary';
 import BackgroundToggle from '../components/BackgroundToggle';
 import NotesModal from '../components/NotesModal';
+import EmailSubscription from '../components/EmailSubscription';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
@@ -250,6 +251,10 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
 
         <div className="flex items-center gap-2">
           <BackgroundToggle />
+          <EmailSubscription 
+            roomName={roomName} 
+            participantName={sessionStorage.getItem('participantName') || 'Guest'} 
+          />
           <CopyLinkButton roomName={roomName} />
 
           {/* End Meeting Button */}
