@@ -75,9 +75,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 relative">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80)' }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/70 to-slate-900" />
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 bg-slate-800 border-b border-slate-700">
+      <header className="relative z-10 flex items-center justify-between px-6 py-4 bg-slate-800/80 backdrop-blur-sm border-b border-slate-700">
         <div className="flex items-center gap-2">
           <svg className="w-8 h-8 text-[#2B88D9]" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
@@ -90,7 +96,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-col items-center px-4 py-12">
+      <main className="relative z-10 flex flex-col items-center px-4 py-12">
         {/* Hero */}
         <div className="text-center mb-10 max-w-lg">
           <h1 className="text-3xl font-bold text-white mb-3">
@@ -326,7 +332,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-6 text-slate-500 text-sm">
+      <footer className="relative z-10 text-center py-6 text-slate-500 text-sm">
         Professional video meetings, simplified.
       </footer>
     </div>
