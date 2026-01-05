@@ -3,6 +3,30 @@ import { BackgroundBlur, VirtualBackground, ProcessorWrapper } from '@livekit/tr
 import type { LocalVideoTrack } from 'livekit-client';
 import { BackgroundOption, BACKGROUND_OPTIONS, STORAGE_KEY } from '../lib/backgrounds';
 
+// Preload image with CORS support for canvas processing
+const preloadImage = (url: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.src = url;
+  });
+};
+
+// Generate a data URL for a solid color (VirtualBackground only accepts image paths)
+const createColorDataUrl = (hexColor: string): string => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = hexColor;
+    ctx.fillRect(0, 0, 1, 1);
+  }
+  return canvas.toDataURL('image/png');
+};
+
 interface UseVirtualBackgroundOptions {
   videoTrack: LocalVideoTrack | undefined;
 }
@@ -74,16 +98,23 @@ export function useVirtualBackground({
         if (option.type === 'blur') {
           processor = BackgroundBlur(option.blurAmount || 10);
         } else if (option.type === 'color') {
-          // VirtualBackground with solid color
-          processor = VirtualBackground(option.value || '#334155');
+          // VirtualBackground needs an image path, so create a 1x1 color data URL
+          const colorDataUrl = createColorDataUrl(option.value || '#334155');
+          processor = VirtualBackground(colorDataUrl);
         } else if (option.type === 'image') {
-          // VirtualBackground with image URL - verify URL exists
+          // VirtualBackground with image URL - preload with CORS first
           if (!option.value) {
             throw new Error('Image URL is required for image backgrounds');
           }
+          // Preload the image to verify it's accessible and CORS-enabled
+          try {
+            await preloadImage(option.value);
+          } catch (preloadErr) {
+            throw new Error('Image could not be loaded. It may be blocked by CORS policy.');
+          }
           processor = VirtualBackground(option.value);
         } else {
-          throw new Error(`Unknown background type: ${option.type}`);
+          throw new Error('Unknown background type: ' + option.type);
         }
 
         // Set processor with timeout to catch hanging operations
