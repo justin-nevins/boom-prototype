@@ -1,0 +1,131 @@
+{
+  "name": "Boom Meeting Summary Email",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "boom-email-summary",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "boom-email-summary"
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-recipients",
+      "name": "Split Recipients",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert Markdown notes to HTML\nconst notes = $('Webhook').first().json.notes;\nconst roomName = $('Webhook').first().json.roomName;\nconst timestamp = $('Webhook').first().json.timestamp;\nconst recipient = $input.first().json;\n\n// Simple markdown to HTML conversion\nlet html = notes\n  .replace(/^### (.+)$/gm, '<h3>$1</h3>')\n  .replace(/^## (.+)$/gm, '<h2>$1</h2>')\n  .replace(/^# (.+)$/gm, '<h1>$1</h1>')\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n  .replace(/\\*(.+?)\\*/g, '<em>$1</em>')\n  .replace(/^- (.+)$/gm, '<li>$1</li>')\n  .replace(/(<li>.*<\\/li>\\n?)+/g, '<ul>$&</ul>')\n  .replace(/\\n\\n/g, '</p><p>')\n  .replace(/^(.+)$/gm, '<p>$1</p>')\n  .replace(/<p><\\/p>/g, '')\n  .replace(/<p>(<h[123]>)/g, '$1')\n  .replace(/(<\\/h[123]>)<\\/p>/g, '$1')\n  .replace(/<p>(<ul>)/g, '$1')\n  .replace(/(<\\/ul>)<\\/p>/g, '$1');\n\nconst meetingDate = new Date(timestamp).toLocaleDateString('en-US', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric',\n  hour: '2-digit',\n  minute: '2-digit'\n});\n\nreturn {\n  json: {\n    email: recipient.email,\n    participantName: recipient.participantName,\n    roomName: roomName,\n    meetingDate: meetingDate,\n    notesHtml: html,\n    notesMarkdown: notes\n  }\n};"
+      },
+      "id": "format-email",
+      "name": "Format Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Meeting Summary - {{ $json.roomName }}",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }\n    h1 { color: #1e40af; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }\n    h2 { color: #1e40af; margin-top: 24px; }\n    h3 { color: #374151; }\n    ul { padding-left: 20px; }\n    li { margin: 8px 0; }\n    .header { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px; }\n    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px; }\n    .content { background: #f9fafb; padding: 20px; border-radius: 8px; }\n  </style>\n</head>\n<body>\n  <div class=\"header\">\n    <h1 style=\"color: white; border: none; margin: 0;\">📋 Meeting Summary</h1>\n    <p style=\"margin: 10px 0 0; opacity: 0.9;\">{{ $json.meetingDate }}</p>\n  </div>\n  \n  <p>Hi {{ $json.participantName }},</p>\n  \n  <p>Here's the summary from your meeting <strong>{{ $json.roomName }}</strong>:</p>\n  \n  <div class=\"content\">\n    {{ $json.notesHtml }}\n  </div>\n  \n  <div class=\"footer\">\n    <p>Sent via <strong>Boom</strong> Video Conferencing</p>\n    <p>You received this email because you opted in during the meeting.</p>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [850, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "loop-done",
+      "name": "Loop Done",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Split Recipients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Recipients": {
+      "main": [
+        [
+          {
+            "node": "Format Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Split Recipients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "tags": []
+}

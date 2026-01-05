@@ -192,6 +192,38 @@ N8N_EMAIL_WEBHOOK_URL=https://your-n8n.instance/webhook/boom-email-summary
 2. **n8n workflow** - Create and test with curl
 3. **Frontend last** - UI component + integration
 
+## n8n Setup Instructions
+
+### 1. Import the Workflow
+
+Import docs/n8n-email-workflow.json into your n8n instance:
+1. Go to your n8n instance
+2. Click Add workflow then Import from file
+3. Select n8n-email-workflow.json
+4. The workflow will be created with a webhook trigger
+
+### 2. Configure Gmail Credentials
+
+1. In n8n, go to Credentials then Add Credential then Gmail OAuth2
+2. Follow the OAuth2 setup to connect your Gmail account
+3. Update the Send Email node to use your credential
+
+### 3. Activate the Workflow
+
+1. Click Activate on the workflow
+2. Copy the webhook URL (click on the Webhook node to see it)
+3. The URL will be something like: https://your-n8n.com/webhook/boom-email-summary
+
+### 4. Configure Backend
+
+Add the webhook URL to your backend environment:
+
+N8N_EMAIL_WEBHOOK_URL=https://your-n8n.com/webhook/boom-email-summary
+
+### 5. Test the Webhook
+
+curl -X POST https://your-n8n.com/webhook/boom-email-summary -H Content-Type:application/json -d {roomName:test,notes:test}
+
 ## Testing Checklist
 
 - [ ] Subscribe during meeting
