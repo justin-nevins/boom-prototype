@@ -7,12 +7,35 @@ import {
   useRoomContext,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
+import { VideoPresets, RoomOptions } from 'livekit-client';
 import ErrorBoundary from '../components/ErrorBoundary';
 import BackgroundToggle from '../components/BackgroundToggle';
 import NotesModal from '../components/NotesModal';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
+
+// Optimized video quality settings - AV1 primary, VP9 fallback
+const roomOptions: RoomOptions = {
+  videoCaptureDefaults: {
+    resolution: VideoPresets.h720,
+    facingMode: 'user',
+  },
+  publishDefaults: {
+    videoCodec: 'av1',
+    backupCodec: { codec: 'vp9' },
+    simulcast: true,
+    videoSimulcastLayers: [
+      VideoPresets.h180,
+      VideoPresets.h360,
+      VideoPresets.h720,
+    ],
+    dynacast: true, // Pause unused layers to save bandwidth
+    red: true, // Redundant audio encoding for network resilience
+    dtx: true, // Discontinuous transmission - save bandwidth on silence
+  },
+  adaptiveStream: true, // Auto-adjust quality based on bandwidth
+};
 
 type RecordingStatus = 'idle' | 'recording' | 'processing' | 'completed' | 'failed';
 
@@ -82,6 +105,7 @@ export default function Room() {
         <LiveKitRoom
           token={token}
           serverUrl={LIVEKIT_URL}
+          options={roomOptions}
           connectOptions={{ autoSubscribe: true }}
           onDisconnected={handleDisconnect}
           data-lk-theme="default"
