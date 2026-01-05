@@ -77,13 +77,24 @@ export function useVirtualBackground({
           // VirtualBackground with solid color
           processor = VirtualBackground(option.value || '#334155');
         } else if (option.type === 'image') {
-          // VirtualBackground with image URL
-          processor = VirtualBackground(option.value || '');
+          // VirtualBackground with image URL - verify URL exists
+          if (!option.value) {
+            throw new Error('Image URL is required for image backgrounds');
+          }
+          processor = VirtualBackground(option.value);
         } else {
           throw new Error(`Unknown background type: ${option.type}`);
         }
 
-        await videoTrack.setProcessor(processor);
+        // Set processor with timeout to catch hanging operations
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Background processor timed out')), 10000)
+        );
+
+        await Promise.race([
+          videoTrack.setProcessor(processor),
+          timeoutPromise
+        ]);
         setCurrentProcessor(processor);
         setCurrentBackground(option);
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ id: option.id }));
@@ -98,9 +109,15 @@ export function useVirtualBackground({
   );
 
   // Apply saved background when video track becomes available
+  // Only auto-apply blur backgrounds - colors/images can cause dark video issues
   useEffect(() => {
-    if (videoTrack && currentBackground.type !== 'none' && !currentProcessor) {
-      applyBackground(currentBackground);
+    if (videoTrack && currentBackground.type === 'blur' && !currentProcessor) {
+      applyBackground(currentBackground).catch((err) => {
+        console.error('Failed to auto-apply background, clearing:', err);
+        // Clear saved preference if auto-apply fails
+        localStorage.removeItem(STORAGE_KEY);
+        setCurrentBackground(BACKGROUND_OPTIONS[0]); // Reset to 'none'
+      });
     }
   }, [videoTrack]);
 
