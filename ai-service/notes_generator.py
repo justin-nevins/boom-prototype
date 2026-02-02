@@ -85,3 +85,50 @@ def format_transcript(entries: list[dict]) -> str:
         text = entry.get("text", "")
         lines.append(f"[{timestamp}] {speaker}: {text}")
     return "\n".join(lines)
+
+
+async def generate_notes_from_text(formatted_transcript: str) -> dict:
+    """
+    Generate meeting notes from pre-formatted transcript string.
+
+    Args:
+        formatted_transcript: Pre-formatted transcript string
+                             (e.g., "[HH:MM:SS] Speaker: text\\n...")
+
+    Returns:
+        dict with markdown notes and token usage
+    """
+    if not ANTHROPIC_API_KEY:
+        raise ValueError("ANTHROPIC_API_KEY not set")
+
+    if not formatted_transcript or not formatted_transcript.strip():
+        return {
+            "markdown": "# Meeting Notes\n\nNo transcript available for this meeting.",
+            "model": "claude-sonnet-4-20250514",
+            "usage": {"input_tokens": 0, "output_tokens": 0}
+        }
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+
+    logger.info(f"Generating notes from {len(formatted_transcript)} chars of transcript")
+
+    message = await client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=2000,
+        system=SYSTEM_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": f"Generate meeting notes from this transcript:\n\n{formatted_transcript}"
+            }
+        ]
+    )
+
+    return {
+        "markdown": message.content[0].text,
+        "model": "claude-sonnet-4-20250514",
+        "usage": {
+            "input_tokens": message.usage.input_tokens,
+            "output_tokens": message.usage.output_tokens
+        }
+    }

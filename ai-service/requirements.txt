@@ -1,15 +1,12 @@
-# LiveKit
+# LiveKit - Real-time room participant
 livekit>=0.13.0
 livekit-api>=0.6.0
 
-# Transcription
+# Transcription - Streaming API
 deepgram-sdk>=3.7.0,<4.0.0
 
 # AI Notes Generation
 anthropic>=0.39.0
-
-# Alternative: Local Whisper (uncomment if not using Deepgram)
-# faster-whisper>=1.0.0
 
 # Utilities
 python-dotenv>=1.0.0

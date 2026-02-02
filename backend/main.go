@@ -93,7 +93,12 @@ func main() {
 	app.Get("/api/meetings/:room/email-subscriptions", getEmailSubscriptionsHandler)
 	app.Delete("/api/meetings/:room/unsubscribe-email", unsubscribeEmailHandler)
 
-	// Egress (recording) API - for batch transcription pivot
+	// Real-time transcription API
+	app.Post("/api/meetings/:room/start-transcription", startTranscriptionHandler)
+	app.Post("/api/meetings/:room/end-transcription", endTranscriptionHandler)
+	app.Post("/api/internal/transcript", receiveTranscriptHandler)
+
+	// Egress (recording) API - deprecated, kept for backwards compatibility
 	app.Post("/api/meetings/:room/start-recording", startRecordingHandler)
 	app.Post("/api/meetings/:room/stop-recording", stopRecordingHandler)
 	app.Get("/api/meetings/:room/recording-status", getRecordingStatusHandler)
@@ -328,6 +333,99 @@ func getRecordingStatusHandler(c *fiber.Ctx) error {
 		"audioUrl":   rec.AudioURL,
 		"durationMs": rec.DurationMS,
 	})
+}
+
+// Real-time transcription handlers
+
+func startTranscriptionHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	// Get or create meeting
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		meeting, err = CreateMeeting(roomName, "")
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to create meeting"})
+		}
+	}
+
+	// Call AI service to join the room
+	payload := []byte(`{"room_name": "` + roomName + `"}`)
+	resp, err := http.Post(aiServiceURL+"/join", "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Failed to start transcription: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to connect to AI service"})
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return c.Status(500).JSON(fiber.Map{"error": "AI service failed to join room"})
+	}
+
+	log.Printf("Started transcription for room %s, meeting ID: %d", roomName, meeting.ID)
+
+	return c.JSON(fiber.Map{
+		"status":    "transcribing",
+		"roomName":  roomName,
+		"meetingId": meeting.ID,
+	})
+}
+
+func endTranscriptionHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	// Call AI service to leave the room and generate notes
+	payload := []byte(`{"room_name": "` + roomName + `"}`)
+	resp, err := http.Post(aiServiceURL+"/leave", "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Failed to end transcription: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to connect to AI service"})
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		return c.Status(404).JSON(fiber.Map{"error": "Room not active"})
+	}
+
+	if resp.StatusCode != 200 {
+		return c.Status(500).JSON(fiber.Map{"error": "AI service failed to process notes"})
+	}
+
+	log.Printf("Ended transcription for room %s, notes should be saved automatically", roomName)
+
+	return c.JSON(fiber.Map{
+		"status":   "processing",
+		"roomName": roomName,
+	})
+}
+
+// TranscriptMessage represents an incoming transcript from AI service
+type TranscriptMessage struct {
+	RoomName  string `json:"room_name"`
+	Speaker   string `json:"speaker"`
+	Text      string `json:"text"`
+	IsFinal   bool   `json:"is_final"`
+	Timestamp string `json:"timestamp"`
+}
+
+func receiveTranscriptHandler(c *fiber.Ctx) error {
+	var msg TranscriptMessage
+	if err := c.BodyParser(&msg); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	// Broadcast to all WebSocket clients for this room
+	broadcastJSON := []byte(`{"speaker":"` + msg.Speaker + `","text":"` + msg.Text + `","is_final":` + boolToString(msg.IsFinal) + `,"timestamp":"` + msg.Timestamp + `"}`)
+	broadcastToRoom(msg.RoomName, broadcastJSON)
+
+	return c.JSON(fiber.Map{"status": "broadcast"})
+}
+
+func boolToString(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
 }
 
 func getRoom(c *fiber.Ctx) error {

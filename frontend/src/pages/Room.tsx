@@ -16,29 +16,24 @@ import EmailSubscription from '../components/EmailSubscription';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
-// Optimized video quality settings - AV1 primary, VP9 fallback
+// Video quality settings
 const roomOptions: RoomOptions = {
   videoCaptureDefaults: {
     resolution: VideoPresets.h720,
     facingMode: 'user',
   },
   publishDefaults: {
-    videoCodec: 'av1',
-    backupCodec: { codec: 'vp9' },
     simulcast: true,
     videoSimulcastLayers: [
       VideoPresets.h180,
       VideoPresets.h360,
       VideoPresets.h720,
     ],
-    dynacast: true, // Pause unused layers to save bandwidth
-    red: true, // Redundant audio encoding for network resilience
-    dtx: true, // Discontinuous transmission - save bandwidth on silence
   },
-  adaptiveStream: true, // Auto-adjust quality based on bandwidth
+  adaptiveStream: true,
 };
 
-type RecordingStatus = 'idle' | 'recording' | 'processing' | 'completed' | 'failed';
+type TranscriptionStatus = 'idle' | 'transcribing' | 'processing' | 'completed' | 'failed';
 
 export default function Room() {
   const { roomName } = useParams<{ roomName: string }>();
@@ -121,61 +116,61 @@ export default function Room() {
 
 function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => void }) {
   const room = useRoomContext();
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>('idle');
+  const [transcriptionStatus, setTranscriptionStatus] = useState<TranscriptionStatus>('idle');
   const [processingStage, setProcessingStage] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [showNotes, setShowNotes] = useState(false);
   const [endingMeeting, setEndingMeeting] = useState(false);
 
-  // Start recording when room connects
+  // Start transcription when room connects
   useEffect(() => {
     if (room.state === 'connected') {
-      startRecording();
+      startTranscription();
     }
   }, [room.state]);
 
-  const startRecording = async () => {
+  const startTranscription = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/meetings/${roomName}/start-recording`, {
+      const res = await fetch(`${BACKEND_URL}/api/meetings/${roomName}/start-transcription`, {
         method: 'POST',
       });
       const data = await res.json();
 
-      if (data.status === 'recording' || data.status === 'already_recording') {
-        setRecordingStatus('recording');
-        console.log('Recording started:', data.egressId);
+      if (data.status === 'transcribing' || data.status === 'already_joined') {
+        setTranscriptionStatus('transcribing');
+        console.log('Transcription started for room:', roomName);
       } else {
-        console.error('Failed to start recording:', data);
+        console.error('Failed to start transcription:', data);
       }
     } catch (err) {
-      console.error('Error starting recording:', err);
+      console.error('Error starting transcription:', err);
     }
   };
 
   const endMeeting = async () => {
     setEndingMeeting(true);
-    setRecordingStatus('processing');
-    setProcessingStage('Stopping recording...');
+    setTranscriptionStatus('processing');
+    setProcessingStage('Generating notes...');
 
     try {
-      // Stop recording
-      const res = await fetch(`${BACKEND_URL}/api/meetings/${roomName}/stop-recording`, {
+      // End transcription and generate notes
+      const res = await fetch(`${BACKEND_URL}/api/meetings/${roomName}/end-transcription`, {
         method: 'POST',
       });
       const data = await res.json();
 
       if (data.status === 'processing') {
-        setProcessingStage('Transcribing audio...');
+        setProcessingStage('Processing transcript...');
 
         // Poll for notes completion
         pollForNotes();
       } else {
-        setRecordingStatus('failed');
-        setProcessingStage('Failed to stop recording');
+        setTranscriptionStatus('failed');
+        setProcessingStage('Failed to end transcription');
       }
     } catch (err) {
       console.error('Error ending meeting:', err);
-      setRecordingStatus('failed');
+      setTranscriptionStatus('failed');
       setProcessingStage('Error ending meeting');
     }
   };
@@ -192,7 +187,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
           const data = await res.json();
           if (data.markdown) {
             setNotes(data.markdown);
-            setRecordingStatus('completed');
+            setTranscriptionStatus('completed');
             setProcessingStage('');
             setShowNotes(true);
             return;
@@ -203,7 +198,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
         if (attempts < maxAttempts) {
           // Update processing stage message
           if (attempts < 10) {
-            setProcessingStage('Transcribing audio...');
+            setProcessingStage('Processing transcript...');
           } else if (attempts < 30) {
             setProcessingStage('Generating meeting notes...');
           } else {
@@ -212,7 +207,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
 
           setTimeout(poll, 5000);
         } else {
-          setRecordingStatus('failed');
+          setTranscriptionStatus('failed');
           setProcessingStage('Timed out waiting for notes');
         }
       } catch (err) {
@@ -240,11 +235,11 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
           <span className="text-slate-400 text-sm">|</span>
           <span className="text-slate-300 text-sm">{roomName}</span>
 
-          {/* Recording indicator */}
-          {recordingStatus === 'recording' && (
+          {/* Transcription indicator */}
+          {transcriptionStatus === 'transcribing' && (
             <div className="flex items-center gap-1.5 ml-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-red-400 text-xs">Recording</span>
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-green-400 text-xs">Live Transcribing</span>
             </div>
           )}
         </div>
@@ -284,7 +279,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
       </div>
 
       {/* Processing overlay */}
-      {endingMeeting && recordingStatus === 'processing' && (
+      {endingMeeting && transcriptionStatus === 'processing' && (
         <div className="absolute inset-0 bg-slate-900/90 z-50 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
