@@ -33,6 +33,14 @@ const roomOptions: RoomOptions = {
   adaptiveStream: true,
 };
 
+// Force TURN/TCP relay so connections work through VPNs and restrictive networks
+const connectOptions = {
+  autoSubscribe: true,
+  rtcConfig: {
+    iceTransportPolicy: 'relay' as RTCIceTransportPolicy,
+  },
+};
+
 type TranscriptionStatus = 'idle' | 'transcribing' | 'processing' | 'completed' | 'failed';
 
 export default function Room() {
@@ -110,7 +118,7 @@ export default function Room() {
           token={token}
           serverUrl={LIVEKIT_URL}
           options={roomOptions}
-          connectOptions={{ autoSubscribe: true }}
+          connectOptions={connectOptions}
           onConnected={() => setWasConnected(true)}
           onDisconnected={handleDisconnect}
           data-lk-theme="default"
