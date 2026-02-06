@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -487,8 +488,28 @@ func broadcastToRoom(room string, msg []byte) {
 	}
 }
 
+var verbs = []string{
+	"flying", "jumping", "running", "dancing", "singing",
+	"cooking", "painting", "reading", "writing", "building",
+	"sailing", "climbing", "glowing", "spinning", "drifting",
+	"roaming", "floating", "shining", "rolling", "charging",
+	"blazing", "cruising", "soaring", "surfing", "hiking",
+	"fishing", "mixing", "coding", "gaming", "racing",
+}
+
+var nouns = []string{
+	"falcon", "tiger", "dolphin", "phoenix", "panther",
+	"rocket", "comet", "summit", "canyon", "river",
+	"garden", "castle", "forest", "island", "ocean",
+	"crystal", "thunder", "breeze", "sunset", "meadow",
+	"glacier", "volcano", "nebula", "aurora", "horizon",
+	"compass", "lantern", "anchor", "bridge", "beacon",
+}
+
 func generateRoomName() string {
-	return "room-" + time.Now().Format("20060102-150405")
+	verb := verbs[rand.Intn(len(verbs))]
+	noun := nouns[rand.Intn(len(nouns))]
+	return verb + "-" + noun
 }
 
 // Notes API handlers
