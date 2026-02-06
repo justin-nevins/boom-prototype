@@ -7,7 +7,7 @@ import {
   useRoomContext,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
-import { VideoPresets, RoomOptions } from 'livekit-client';
+import { VideoPresets, RoomOptions, DisconnectReason } from 'livekit-client';
 import ErrorBoundary from '../components/ErrorBoundary';
 import BackgroundToggle from '../components/BackgroundToggle';
 import NotesModal from '../components/NotesModal';
@@ -40,6 +40,7 @@ export default function Room() {
   const navigate = useNavigate();
   const [token, setToken] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [wasConnected, setWasConnected] = useState(false);
 
   useEffect(() => {
     const participantName = sessionStorage.getItem('participantName') || 'Guest';
@@ -67,8 +68,15 @@ export default function Room() {
       });
   }, [roomName]);
 
-  const handleDisconnect = () => {
-    navigate('/');
+  const handleDisconnect = (reason?: DisconnectReason) => {
+    console.log('LiveKit disconnected, reason:', reason, 'wasConnected:', wasConnected);
+    if (wasConnected) {
+      // Normal disconnect after being in a meeting
+      navigate('/');
+    } else {
+      // Never fully connected — show error instead of silent redirect
+      setError('Failed to connect to meeting. The video connection could not be established.');
+    }
   };
 
   if (error) {
@@ -103,6 +111,7 @@ export default function Room() {
           serverUrl={LIVEKIT_URL}
           options={roomOptions}
           connectOptions={{ autoSubscribe: true }}
+          onConnected={() => setWasConnected(true)}
           onDisconnected={handleDisconnect}
           data-lk-theme="default"
           style={{ height: '100%' }}
