@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -179,13 +180,17 @@ func getToken(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
+	// Use unique identity per connection so multiple devices can join as the same name
+	identity := fmt.Sprintf("%s-%d", req.ParticipantName, rand.Intn(100000))
+
 	at := auth.NewAccessToken(apiKey, apiSecret)
 	grant := &auth.VideoGrant{
 		RoomJoin: true,
 		Room:     req.RoomName,
 	}
 	at.AddGrant(grant).
-		SetIdentity(req.ParticipantName).
+		SetIdentity(identity).
+		SetName(req.ParticipantName).
 		SetValidFor(24 * time.Hour)
 
 	token, err := at.ToJWT()
