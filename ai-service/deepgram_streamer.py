@@ -140,11 +140,11 @@ class DeepgramStreamer:
 
     # Event handlers
 
-    def _on_open(self, *args, **kwargs):
+    async def _on_open(self, *args, **kwargs):
         """Called when connection opens."""
         logger.debug(f"[{self.room_name}] Deepgram connection opened")
 
-    def _on_transcript(self, *args, **kwargs):
+    async def _on_transcript(self, *args, **kwargs):
         """Called when transcript is received."""
         try:
             result = kwargs.get("result") or (args[1] if len(args) > 1 else None)
@@ -176,17 +176,17 @@ class DeepgramStreamer:
         except Exception as e:
             logger.error(f"[{self.room_name}] Error processing transcript: {e}")
 
-    def _on_error(self, *args, **kwargs):
+    async def _on_error(self, *args, **kwargs):
         """Called on error."""
         error = kwargs.get("error") or (args[1] if len(args) > 1 else "Unknown error")
         logger.error(f"[{self.room_name}] Deepgram error: {error}")
 
-    def _on_close(self, *args, **kwargs):
+    async def _on_close(self, *args, **kwargs):
         """Called when connection closes."""
         self._is_connected = False
         logger.info(f"[{self.room_name}] Deepgram connection closed for {self.speaker_name}")
 
-    def _on_utterance_end(self, *args, **kwargs):
+    async def _on_utterance_end(self, *args, **kwargs):
         """Called when an utterance ends (silence detected)."""
         logger.debug(f"[{self.room_name}] Utterance end detected for {self.speaker_name}")
 
