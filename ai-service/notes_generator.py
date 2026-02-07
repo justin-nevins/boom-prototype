@@ -52,7 +52,7 @@ async def generate_notes(transcript: list[dict]) -> dict:
     logger.info(f"Generating notes from {len(transcript)} transcript entries")
 
     message = await client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-opus-4-6",
         max_tokens=2000,
         system=SYSTEM_PROMPT,
         messages=[
@@ -65,7 +65,7 @@ async def generate_notes(transcript: list[dict]) -> dict:
 
     return {
         "markdown": message.content[0].text,
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-opus-4-6",
         "usage": {
             "input_tokens": message.usage.input_tokens,
             "output_tokens": message.usage.output_tokens
@@ -104,7 +104,7 @@ async def generate_notes_from_text(formatted_transcript: str) -> dict:
     if not formatted_transcript or not formatted_transcript.strip():
         return {
             "markdown": "# Meeting Notes\n\nNo transcript available for this meeting.",
-            "model": "claude-sonnet-4-20250514",
+            "model": "claude-opus-4-6",
             "usage": {"input_tokens": 0, "output_tokens": 0}
         }
 
@@ -113,7 +113,7 @@ async def generate_notes_from_text(formatted_transcript: str) -> dict:
     logger.info(f"Generating notes from {len(formatted_transcript)} chars of transcript")
 
     message = await client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-opus-4-6",
         max_tokens=2000,
         system=SYSTEM_PROMPT,
         messages=[
@@ -126,7 +126,7 @@ async def generate_notes_from_text(formatted_transcript: str) -> dict:
 
     return {
         "markdown": message.content[0].text,
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-opus-4-6",
         "usage": {
             "input_tokens": message.usage.input_tokens,
             "output_tokens": message.usage.output_tokens

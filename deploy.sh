@@ -41,6 +41,7 @@ deploy_backend() {
             -e LIVEKIT_URL="$LIVEKIT_URL" \
             -e FRONTEND_URL=https://meet.nevins.cloud \
             -e AI_SERVICE_URL=http://boom-ai:8081 \
+            -e N8N_EMAIL_WEBHOOK_URL="$N8N_EMAIL_WEBHOOK_URL" \
             boom-backend:latest
         rm -rf /tmp/boom-prototype
         echo "Backend deployed successfully"
