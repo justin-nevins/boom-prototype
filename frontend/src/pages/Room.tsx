@@ -31,13 +31,14 @@ const roomOptions: RoomOptions = {
     ],
   },
   adaptiveStream: true,
+  disconnectOnPageLeave: false,
 };
 
-// Force TURN/TCP relay so connections work through VPNs and restrictive networks
 const connectOptions = {
   autoSubscribe: true,
+  peerConnectionTimeout: 45_000,
   rtcConfig: {
-    iceTransportPolicy: 'relay' as RTCIceTransportPolicy,
+    iceTransportPolicy: 'all' as RTCIceTransportPolicy,
   },
 };
 
