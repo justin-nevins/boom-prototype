@@ -78,8 +78,8 @@ class DeepgramStreamer:
                 channels=1,
             )
 
-            # Create live connection
-            self._connection = self._client.listen.live.v("1")
+            # Create live connection (async version)
+            self._connection = self._client.listen.asynclive.v("1")
 
             # Register event handlers
             self._connection.on(LiveTranscriptionEvents.Open, self._on_open)

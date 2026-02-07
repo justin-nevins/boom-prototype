@@ -35,6 +35,7 @@ deploy_backend() {
         docker rm boom-backend 2>/dev/null || true
         docker run -d --name boom-backend \
             --network "$NETWORK" \
+            --restart unless-stopped \
             -e LIVEKIT_API_KEY="$LIVEKIT_API_KEY" \
             -e LIVEKIT_API_SECRET="$LIVEKIT_API_SECRET" \
             -e LIVEKIT_URL="$LIVEKIT_URL" \
@@ -59,6 +60,7 @@ deploy_ai() {
         docker rm boom-ai 2>/dev/null || true
         docker run -d --name boom-ai \
             --network "$NETWORK" \
+            --restart unless-stopped \
             -e LIVEKIT_API_KEY="$LIVEKIT_API_KEY" \
             -e LIVEKIT_API_SECRET="$LIVEKIT_API_SECRET" \
             -e LIVEKIT_URL="$LIVEKIT_URL" \
@@ -88,6 +90,7 @@ deploy_frontend() {
         docker rm boom-frontend 2>/dev/null || true
         docker run -d --name boom-frontend \
             --network "$NETWORK" \
+            --restart unless-stopped \
             boom-frontend:latest
         rm -rf /tmp/boom-prototype
         echo "Frontend deployed successfully"
