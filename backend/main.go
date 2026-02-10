@@ -59,6 +59,9 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
+	// Initialize auth (seed users, set JWT secret)
+	initAuth()
+
 	roomClient = lksdk.NewRoomServiceClient(livekitHost, apiKey, apiSecret)
 	egressClient = lksdk.NewEgressClient(livekitHost, apiKey, apiSecret)
 
@@ -67,8 +70,8 @@ func main() {
 	// CORS
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     os.Getenv("FRONTEND_URL"),
-		AllowMethods:     "GET, POST, OPTIONS",
-		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowMethods:     "GET, POST, DELETE, OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
 
@@ -80,10 +83,21 @@ func main() {
 		})
 	})
 
-	// Routes
-	app.Post("/api/rooms", createRoom)
+	// Auth routes
+	app.Post("/api/auth/login", loginHandler)
+	app.Get("/api/auth/me", authRequired(), meHandler)
+
+	// Routes (room creation requires auth)
+	app.Post("/api/rooms", authRequired(), createRoom)
 	app.Post("/api/token", getToken)
 	app.Get("/api/rooms/:id", getRoom)
+
+	// Scheduling routes
+	app.Post("/api/scheduled-meetings", authRequired(), createScheduledMeetingHandler)
+	app.Get("/api/scheduled-meetings", authRequired(), listScheduledMeetingsHandler)
+	app.Delete("/api/scheduled-meetings/:id", authRequired(), cancelScheduledMeetingHandler)
+	app.Post("/api/scheduled-meetings/:id/start", authRequired(), startScheduledMeetingHandler)
+	app.Get("/api/join/:room", getJoinInfoHandler)
 
 	// Notes API
 	app.Post("/api/meetings/:room/notes", saveNotesHandler)
@@ -491,6 +505,146 @@ func broadcastToRoom(room string, msg []byte) {
 	for conn := range transcriptWS[room] {
 		conn.WriteMessage(websocket.TextMessage, msg)
 	}
+}
+
+// Scheduling handlers
+
+type CreateScheduledMeetingRequest struct {
+	ClientName  string `json:"clientName"`
+	ClientEmail string `json:"clientEmail"`
+	ScheduledAt string `json:"scheduledAt"` // ISO 8601
+}
+
+func createScheduledMeetingHandler(c *fiber.Ctx) error {
+	var req CreateScheduledMeetingRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	scheduledAt, err := time.Parse(time.RFC3339, req.ScheduledAt)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid date format, use ISO 8601"})
+	}
+
+	hostUserID := c.Locals("userID").(int64)
+	roomName := generateRoomName()
+
+	meeting, err := CreateScheduledMeeting(roomName, hostUserID, req.ClientName, req.ClientEmail, scheduledAt)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to create scheduled meeting"})
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	inviteLink := fmt.Sprintf("%s/join/%s", frontendURL, roomName)
+
+	return c.JSON(fiber.Map{
+		"id":          meeting.ID,
+		"roomName":    meeting.RoomName,
+		"scheduledAt": meeting.ScheduledAt,
+		"inviteLink":  inviteLink,
+		"clientName":  meeting.ClientName,
+		"clientEmail": meeting.ClientEmail,
+	})
+}
+
+func listScheduledMeetingsHandler(c *fiber.Ctx) error {
+	hostUserID := c.Locals("userID").(int64)
+
+	meetings, err := ListScheduledMeetingsByHost(hostUserID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	if meetings == nil {
+		meetings = []ScheduledMeeting{}
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	var results []fiber.Map
+	for _, m := range meetings {
+		results = append(results, fiber.Map{
+			"id":          m.ID,
+			"roomName":    m.RoomName,
+			"clientName":  m.ClientName,
+			"clientEmail": m.ClientEmail,
+			"scheduledAt": m.ScheduledAt,
+			"status":      m.Status,
+			"inviteLink":  fmt.Sprintf("%s/join/%s", frontendURL, m.RoomName),
+		})
+	}
+	if results == nil {
+		results = []fiber.Map{}
+	}
+
+	return c.JSON(results)
+}
+
+func cancelScheduledMeetingHandler(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	var id int64
+	fmt.Sscanf(idStr, "%d", &id)
+
+	hostUserID := c.Locals("userID").(int64)
+
+	if err := CancelScheduledMeeting(id, hostUserID); err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"status": "cancelled"})
+}
+
+func startScheduledMeetingHandler(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	var id int64
+	fmt.Sscanf(idStr, "%d", &id)
+
+	hostUserID := c.Locals("userID").(int64)
+
+	// Get the scheduled meeting
+	var roomName string
+	var meetingHostID int64
+	err := db.QueryRow("SELECT room_name, host_user_id FROM scheduled_meetings WHERE id = ? AND status = 'scheduled'", id).Scan(&roomName, &meetingHostID)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Scheduled meeting not found"})
+	}
+	if meetingHostID != hostUserID {
+		return c.Status(403).JSON(fiber.Map{"error": "Not your meeting"})
+	}
+
+	// Create the LiveKit room
+	room, err := roomClient.CreateRoom(context.Background(), &livekit.CreateRoomRequest{
+		Name:            roomName,
+		EmptyTimeout:    10 * 60,
+		MaxParticipants: 50,
+	})
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Update status to active
+	UpdateScheduledMeetingStatus(id, "active")
+
+	return c.JSON(fiber.Map{
+		"status":   "active",
+		"roomName": room.Name,
+		"roomId":   room.Sid,
+	})
+}
+
+func getJoinInfoHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	meeting, err := GetScheduledMeetingByRoom(roomName)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Meeting not found"})
+	}
+
+	return c.JSON(fiber.Map{
+		"roomName":    meeting.RoomName,
+		"hostName":    meeting.HostName,
+		"clientName":  meeting.ClientName,
+		"scheduledAt": meeting.ScheduledAt,
+		"status":      meeting.Status,
+	})
 }
 
 var verbs = []string{

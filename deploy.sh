@@ -42,6 +42,8 @@ deploy_backend() {
             -e FRONTEND_URL=https://meet.nevins.cloud \
             -e AI_SERVICE_URL=http://boom-ai:8081 \
             -e N8N_EMAIL_WEBHOOK_URL="$N8N_EMAIL_WEBHOOK_URL" \
+            -e JWT_SECRET="$JWT_SECRET" \
+            -e BOOM_ADMIN_PASSWORD="$BOOM_ADMIN_PASSWORD" \
             boom-backend:latest
         rm -rf /tmp/boom-prototype
         echo "Backend deployed successfully"

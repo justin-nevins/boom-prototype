@@ -1,12 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
-const APPOINTMENT_WEBHOOK = import.meta.env.VITE_APPOINTMENT_WEBHOOK || '';
+
+interface ScheduledMeeting {
+  id: number;
+  roomName: string;
+  clientName: string;
+  clientEmail: string;
+  scheduledAt: string;
+  status: string;
+  inviteLink: string;
+}
 
 export default function Home() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'join' | 'appointment'>('join');
+  const { user, isAuthenticated, token, logout, loading: authLoading } = useAuth();
+  const [activeTab, setActiveTab] = useState<'join' | 'schedule'>('join');
 
   // Join meeting state
   const [joinCode, setJoinCode] = useState('');
@@ -14,16 +25,39 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Appointment form state
-  const [appointmentForm, setAppointmentForm] = useState({
-    name: '',
-    email: '',
+  // Schedule form state
+  const [scheduleForm, setScheduleForm] = useState({
+    clientName: '',
+    clientEmail: '',
     date: '',
     time: '',
-    message: '',
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [scheduling, setScheduling] = useState(false);
+  const [scheduledLink, setScheduledLink] = useState('');
+
+  // My meetings state
+  const [myMeetings, setMyMeetings] = useState<ScheduledMeeting[]>([]);
+  const [copiedLink, setCopiedLink] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      fetchMyMeetings();
+    }
+  }, [isAuthenticated, token]);
+
+  const fetchMyMeetings = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/scheduled-meetings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMyMeetings(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch meetings:', err);
+    }
+  };
 
   const createMeeting = async () => {
     setLoading(true);
@@ -31,12 +65,15 @@ export default function Home() {
     try {
       const res = await fetch(`${BACKEND_URL}/api/rooms`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ name: '' }),
       });
       if (!res.ok) throw new Error('Failed to create room');
       const data = await res.json();
-      sessionStorage.setItem('participantName', name || 'Guest');
+      sessionStorage.setItem('participantName', name || user?.name || 'Guest');
       navigate(`/room/${data.roomName}`);
     } catch (err) {
       console.error('Failed to create room:', err);
@@ -52,26 +89,66 @@ export default function Home() {
     navigate(`/room/${joinCode.trim()}`);
   };
 
-  const submitAppointment = async (e: React.FormEvent) => {
+  const scheduleMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!APPOINTMENT_WEBHOOK) {
-      console.error('Appointment webhook not configured');
-      return;
-    }
-    setSubmitting(true);
+    setScheduling(true);
+    setScheduledLink('');
     try {
-      await fetch(APPOINTMENT_WEBHOOK, {
+      const scheduledAt = new Date(`${scheduleForm.date}T${scheduleForm.time}`).toISOString();
+      const res = await fetch(`${BACKEND_URL}/api/scheduled-meetings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(appointmentForm),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          clientName: scheduleForm.clientName,
+          clientEmail: scheduleForm.clientEmail,
+          scheduledAt,
+        }),
       });
-      setSubmitted(true);
-      setAppointmentForm({ name: '', email: '', date: '', time: '', message: '' });
+      if (!res.ok) throw new Error('Failed to schedule meeting');
+      const data = await res.json();
+      setScheduledLink(data.inviteLink);
+      setScheduleForm({ clientName: '', clientEmail: '', date: '', time: '' });
+      fetchMyMeetings();
     } catch (err) {
-      console.error('Failed to submit appointment:', err);
+      console.error('Failed to schedule:', err);
     } finally {
-      setSubmitting(false);
+      setScheduling(false);
     }
+  };
+
+  const cancelMeeting = async (id: number) => {
+    try {
+      await fetch(`${BACKEND_URL}/api/scheduled-meetings/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchMyMeetings();
+    } catch (err) {
+      console.error('Failed to cancel:', err);
+    }
+  };
+
+  const startScheduledMeeting = async (meeting: ScheduledMeeting) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/scheduled-meetings/${meeting.id}/start`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Failed to start meeting');
+      sessionStorage.setItem('participantName', user?.name || 'Host');
+      navigate(`/room/${meeting.roomName}`);
+    } catch (err) {
+      console.error('Failed to start meeting:', err);
+    }
+  };
+
+  const copyInviteLink = (link: string, id: number) => {
+    navigator.clipboard.writeText(link);
+    setCopiedLink(id);
+    setTimeout(() => setCopiedLink(null), 2000);
   };
 
   return (
@@ -82,6 +159,7 @@ export default function Home() {
         style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80)' }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/70 to-slate-900" />
+
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-6 py-4 bg-slate-800/80 backdrop-blur-sm border-b border-slate-700">
         <div className="flex items-center gap-2">
@@ -90,9 +168,26 @@ export default function Home() {
           </svg>
           <span className="text-xl font-semibold text-white">Meet</span>
         </div>
-        <button className="px-4 py-2 text-sm font-medium text-[#2B88D9] hover:bg-slate-700 rounded-lg transition-colors">
-          Sign In
-        </button>
+        {!authLoading && (
+          isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-300">{user?.name}</span>
+              <button
+                onClick={logout}
+                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className="px-4 py-2 text-sm font-medium text-[#2B88D9] hover:bg-slate-700 rounded-lg transition-colors"
+            >
+              Sign In
+            </button>
+          )
+        )}
       </header>
 
       {/* Main Content */}
@@ -119,25 +214,26 @@ export default function Home() {
                   : 'text-slate-400 hover:text-slate-300 bg-slate-850'
               }`}
             >
-              Join Meeting
+              {isAuthenticated ? 'Meetings' : 'Join Meeting'}
             </button>
-            <button
-              onClick={() => { setActiveTab('appointment'); setSubmitted(false); }}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                activeTab === 'appointment'
-                  ? 'text-[#2B88D9] border-b-2 border-[#2B88D9] bg-slate-800'
-                  : 'text-slate-400 hover:text-slate-300 bg-slate-850'
-              }`}
-            >
-              Request Appointment
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={() => { setActiveTab('schedule'); setScheduledLink(''); }}
+                className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                  activeTab === 'schedule'
+                    ? 'text-[#2B88D9] border-b-2 border-[#2B88D9] bg-slate-800'
+                    : 'text-slate-400 hover:text-slate-300 bg-slate-850'
+                }`}
+              >
+                Schedule Meeting
+              </button>
+            )}
           </div>
 
           {/* Tab Content */}
           <div className="p-6">
             {activeTab === 'join' ? (
               <div className="space-y-4">
-                {/* Error Message */}
                 {error && (
                   <div className="p-3 bg-red-900/50 border border-red-700 rounded-lg text-red-300 text-sm">
                     {error}
@@ -153,7 +249,7 @@ export default function Home() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    placeholder={isAuthenticated ? user?.name || 'Enter your name' : 'Enter your name'}
                     className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent"
                   />
                 </div>
@@ -181,123 +277,181 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Divider */}
-                <div className="relative my-2">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-600"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-slate-800 text-slate-400">or start new</span>
-                  </div>
-                </div>
+                {/* Start New Meeting - only for authenticated users */}
+                {isAuthenticated && (
+                  <>
+                    <div className="relative my-2">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-600"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-3 bg-slate-800 text-slate-400">or start new</span>
+                      </div>
+                    </div>
 
-                {/* Create Meeting Button */}
-                <button
-                  onClick={createMeeting}
-                  disabled={loading}
-                  className="w-full py-2.5 px-4 bg-[#2B88D9] hover:bg-[#2477c2] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Creating...' : 'Start New Meeting'}
-                </button>
+                    <button
+                      onClick={createMeeting}
+                      disabled={loading}
+                      className="w-full py-2.5 px-4 bg-[#2B88D9] hover:bg-[#2477c2] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'Creating...' : 'Start New Meeting'}
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
-              <form onSubmit={submitAppointment} className="space-y-4">
-                {submitted ? (
-                  <div className="text-center py-8">
+              /* Schedule Meeting Tab */
+              <div className="space-y-4">
+                {scheduledLink ? (
+                  <div className="text-center py-4">
                     <svg className="w-12 h-12 text-[#0396A6] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <h3 className="text-lg font-medium text-white mb-1">Request Sent</h3>
-                    <p className="text-slate-400 text-sm">We'll be in touch soon.</p>
+                    <h3 className="text-lg font-medium text-white mb-2">Meeting Scheduled</h3>
+                    <p className="text-slate-400 text-sm mb-4">Send this link to your client:</p>
+                    <div className="flex items-center gap-2 bg-slate-700 rounded-lg p-3">
+                      <input
+                        type="text"
+                        readOnly
+                        value={scheduledLink}
+                        className="flex-1 bg-transparent text-white text-sm focus:outline-none"
+                      />
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(scheduledLink); }}
+                        className="px-3 py-1 bg-[#2B88D9] hover:bg-[#2477c2] text-white text-sm rounded transition-colors"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setScheduledLink('')}
+                      className="mt-4 text-slate-400 text-sm hover:text-slate-300 transition-colors"
+                    >
+                      Schedule another
+                    </button>
                   </div>
                 ) : (
-                  <>
-                    {/* Name + Email Row */}
+                  <form onSubmit={scheduleMeeting} className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Name <span className="text-[#D93D1A]">*</span>
+                          Client Name <span className="text-[#D93D1A]">*</span>
                         </label>
                         <input
                           type="text"
                           required
-                          value={appointmentForm.name}
-                          onChange={(e) => setAppointmentForm({ ...appointmentForm, name: e.target.value })}
-                          placeholder="Your name"
+                          value={scheduleForm.clientName}
+                          onChange={(e) => setScheduleForm({ ...scheduleForm, clientName: e.target.value })}
+                          placeholder="Client name"
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Email <span className="text-[#D93D1A]">*</span>
+                          Client Email
                         </label>
                         <input
                           type="email"
-                          required
-                          value={appointmentForm.email}
-                          onChange={(e) => setAppointmentForm({ ...appointmentForm, email: e.target.value })}
-                          placeholder="you@email.com"
+                          value={scheduleForm.clientEmail}
+                          onChange={(e) => setScheduleForm({ ...scheduleForm, clientEmail: e.target.value })}
+                          placeholder="client@email.com"
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
                     </div>
 
-                    {/* Date + Time Row */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Preferred Date <span className="text-[#D93D1A]">*</span>
+                          Date <span className="text-[#D93D1A]">*</span>
                         </label>
                         <input
                           type="date"
                           required
-                          value={appointmentForm.date}
-                          onChange={(e) => setAppointmentForm({ ...appointmentForm, date: e.target.value })}
+                          value={scheduleForm.date}
+                          onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Preferred Time <span className="text-[#D93D1A]">*</span>
+                          Time <span className="text-[#D93D1A]">*</span>
                         </label>
                         <input
                           type="time"
                           required
-                          value={appointmentForm.time}
-                          onChange={(e) => setAppointmentForm({ ...appointmentForm, time: e.target.value })}
+                          value={scheduleForm.time}
+                          onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
                     </div>
 
-                    {/* Message */}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                        Message
-                      </label>
-                      <textarea
-                        value={appointmentForm.message}
-                        onChange={(e) => setAppointmentForm({ ...appointmentForm, message: e.target.value })}
-                        placeholder="What would you like to discuss?"
-                        rows={3}
-                        className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm resize-none"
-                      />
-                    </div>
-
-                    {/* Submit */}
                     <button
                       type="submit"
-                      disabled={submitting}
-                      className="w-full py-2.5 px-4 bg-[#D93D1A] hover:bg-[#c23516] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={scheduling}
+                      className="w-full py-2.5 px-4 bg-[#2B88D9] hover:bg-[#2477c2] text-white font-medium rounded-lg transition-colors disabled:opacity-50"
                     >
-                      {submitting ? 'Sending...' : 'Request Appointment'}
+                      {scheduling ? 'Scheduling...' : 'Schedule Meeting'}
                     </button>
-                  </>
+                  </form>
                 )}
-              </form>
+              </div>
             )}
           </div>
         </div>
+
+        {/* My Meetings - only for authenticated users */}
+        {isAuthenticated && myMeetings.length > 0 && (
+          <div className="w-full max-w-md mt-6">
+            <h3 className="text-white font-semibold mb-3">Upcoming Meetings</h3>
+            <div className="space-y-2">
+              {myMeetings.map((m) => (
+                <div key={m.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-white font-medium">{m.clientName || 'No client name'}</p>
+                      <p className="text-slate-400 text-sm">
+                        {new Date(m.scheduledAt).toLocaleDateString()} at{' '}
+                        {new Date(m.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                      {m.clientEmail && (
+                        <p className="text-slate-500 text-xs mt-0.5">{m.clientEmail}</p>
+                      )}
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded ${
+                      m.status === 'active'
+                        ? 'bg-green-900/50 text-green-400'
+                        : 'bg-slate-700 text-slate-400'
+                    }`}>
+                      {m.status}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => startScheduledMeeting(m)}
+                      className="flex-1 py-1.5 px-3 bg-[#0396A6] hover:bg-[#027d8a] text-white text-sm rounded transition-colors"
+                    >
+                      Start
+                    </button>
+                    <button
+                      onClick={() => copyInviteLink(m.inviteLink, m.id)}
+                      className="py-1.5 px-3 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded transition-colors"
+                    >
+                      {copiedLink === m.id ? 'Copied!' : 'Copy Link'}
+                    </button>
+                    <button
+                      onClick={() => cancelMeeting(m.id)}
+                      className="py-1.5 px-3 bg-slate-700 hover:bg-red-900/50 text-slate-400 hover:text-red-400 text-sm rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Features */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 max-w-lg">

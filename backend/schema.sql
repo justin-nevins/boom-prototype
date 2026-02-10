@@ -52,3 +52,28 @@ CREATE TABLE IF NOT EXISTS email_subscriptions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_email_subs_meeting ON email_subscriptions(meeting_id);
+
+-- users table (seeded, no registration)
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    name TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- scheduled_meetings table
+CREATE TABLE IF NOT EXISTS scheduled_meetings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_name TEXT UNIQUE NOT NULL,
+    host_user_id INTEGER NOT NULL,
+    client_name TEXT,
+    client_email TEXT,
+    scheduled_at DATETIME NOT NULL,
+    status TEXT DEFAULT 'scheduled',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (host_user_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_scheduled_host ON scheduled_meetings(host_user_id);
+CREATE INDEX IF NOT EXISTS idx_scheduled_room ON scheduled_meetings(room_name);

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	_ "embed"
+	"fmt"
 	"log"
 	"time"
 
@@ -350,4 +351,105 @@ func DeleteEmailSubscription(roomName, email string) error {
 
 	_, err = db.Exec("DELETE FROM email_subscriptions WHERE meeting_id = ? AND email = ?", meeting.ID, email)
 	return err
+}
+
+// ScheduledMeeting represents a future meeting created by a host
+type ScheduledMeeting struct {
+	ID          int64     `json:"id"`
+	RoomName    string    `json:"roomName"`
+	HostUserID  int64     `json:"hostUserId"`
+	HostName    string    `json:"hostName,omitempty"`
+	ClientName  string    `json:"clientName"`
+	ClientEmail string    `json:"clientEmail"`
+	ScheduledAt time.Time `json:"scheduledAt"`
+	Status      string    `json:"status"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
+
+// CreateScheduledMeeting inserts a new scheduled meeting
+func CreateScheduledMeeting(roomName string, hostUserID int64, clientName, clientEmail string, scheduledAt time.Time) (*ScheduledMeeting, error) {
+	result, err := db.Exec(
+		"INSERT INTO scheduled_meetings (room_name, host_user_id, client_name, client_email, scheduled_at) VALUES (?, ?, ?, ?, ?)",
+		roomName, hostUserID, clientName, clientEmail, scheduledAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, _ := result.LastInsertId()
+	return &ScheduledMeeting{
+		ID:          id,
+		RoomName:    roomName,
+		HostUserID:  hostUserID,
+		ClientName:  clientName,
+		ClientEmail: clientEmail,
+		ScheduledAt: scheduledAt,
+		Status:      "scheduled",
+		CreatedAt:   time.Now(),
+	}, nil
+}
+
+// GetScheduledMeetingByRoom retrieves a scheduled meeting by room name
+func GetScheduledMeetingByRoom(roomName string) (*ScheduledMeeting, error) {
+	var m ScheduledMeeting
+	var hostName string
+	err := db.QueryRow(
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		 FROM scheduled_meetings sm
+		 JOIN users u ON sm.host_user_id = u.id
+		 WHERE sm.room_name = ?`,
+		roomName,
+	).Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	m.HostName = hostName
+	return &m, nil
+}
+
+// ListScheduledMeetingsByHost returns scheduled meetings for a host
+func ListScheduledMeetingsByHost(hostUserID int64) ([]ScheduledMeeting, error) {
+	rows, err := db.Query(
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		 FROM scheduled_meetings sm
+		 JOIN users u ON sm.host_user_id = u.id
+		 WHERE sm.host_user_id = ? AND sm.status IN ('scheduled', 'active')
+		 ORDER BY sm.scheduled_at ASC`,
+		hostUserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var meetings []ScheduledMeeting
+	for rows.Next() {
+		var m ScheduledMeeting
+		var hostName string
+		if err := rows.Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt); err != nil {
+			continue
+		}
+		m.HostName = hostName
+		meetings = append(meetings, m)
+	}
+	return meetings, nil
+}
+
+// UpdateScheduledMeetingStatus updates the status of a scheduled meeting
+func UpdateScheduledMeetingStatus(id int64, status string) error {
+	_, err := db.Exec("UPDATE scheduled_meetings SET status = ? WHERE id = ?", status, id)
+	return err
+}
+
+// CancelScheduledMeeting cancels a scheduled meeting owned by the given user
+func CancelScheduledMeeting(id, hostUserID int64) error {
+	result, err := db.Exec("UPDATE scheduled_meetings SET status = 'cancelled' WHERE id = ? AND host_user_id = ?", id, hostUserID)
+	if err != nil {
+		return err
+	}
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return fmt.Errorf("meeting not found or not owned by user")
+	}
+	return nil
 }
