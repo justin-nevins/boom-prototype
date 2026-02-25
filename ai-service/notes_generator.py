@@ -2,10 +2,13 @@
 Meeting Notes Generator using Claude API
 
 Generates structured markdown notes from meeting transcripts.
+Supports both single-pass and chunked generation for long meetings.
 """
 
 import os
+import asyncio
 import logging
+from typing import List
 from anthropic import AsyncAnthropic
 
 logger = logging.getLogger("notes-generator")
@@ -130,5 +133,167 @@ async def generate_notes_from_text(formatted_transcript: str) -> dict:
         "usage": {
             "input_tokens": message.usage.input_tokens,
             "output_tokens": message.usage.output_tokens
+        }
+    }
+
+
+# Chunked generation for long meetings
+
+CHUNK_SUMMARY_PROMPT = """You are a meeting notes assistant. Given a portion of a meeting transcript, extract the key points discussed.
+
+Output a brief summary with:
+- Main topics discussed (2-5 bullet points)
+- Any decisions or action items mentioned
+- Key statements or quotes worth noting
+
+Keep it concise - this will be combined with other chunk summaries later."""
+
+
+CONSOLIDATION_PROMPT = """You are a meeting notes assistant. You have been given summaries of different portions of a long meeting. Consolidate these into comprehensive meeting notes.
+
+Structure your notes with:
+1. **Meeting Summary** - 2-3 sentence overview of what was discussed
+2. **Key Discussion Points** - Main topics covered with brief details
+3. **Decisions Made** - Any decisions or conclusions reached
+4. **Action Items** - Tasks assigned with owners if mentioned (use checkboxes: - [ ])
+5. **Follow-ups** - Items that need future attention or discussion
+
+Guidelines:
+- Combine related topics from different chunks
+- Remove redundancy while preserving important details
+- Use bullet points for readability
+- Highlight important items with **bold**
+- If no action items or decisions were made, you can omit those sections"""
+
+
+async def generate_chunk_summary(chunk_text: str, chunk_index: int) -> dict:
+    """
+    Generate a brief summary of a single transcript chunk.
+
+    This is faster than full notes generation and uses less tokens.
+    Used for long meetings that need to be processed in parts.
+    """
+    if not ANTHROPIC_API_KEY:
+        raise ValueError("ANTHROPIC_API_KEY not set")
+
+    if not chunk_text or not chunk_text.strip():
+        return {
+            "summary": f"[Chunk {chunk_index}: No transcript content]",
+            "chunk_index": chunk_index,
+            "usage": {"input_tokens": 0, "output_tokens": 0}
+        }
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+
+    logger.info(f"Generating summary for chunk {chunk_index} ({len(chunk_text)} chars)")
+
+    message = await client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1024,  # Shorter output for chunk summaries
+        system=CHUNK_SUMMARY_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": f"Summarize this portion of the meeting (chunk {chunk_index + 1}):\n\n{chunk_text}"
+            }
+        ]
+    )
+
+    return {
+        "summary": message.content[0].text,
+        "chunk_index": chunk_index,
+        "usage": {
+            "input_tokens": message.usage.input_tokens,
+            "output_tokens": message.usage.output_tokens
+        }
+    }
+
+
+async def generate_notes_from_chunks(chunks: List[dict]) -> dict:
+    """
+    Generate meeting notes from multiple transcript chunks.
+
+    Two-pass approach:
+    1. Generate summary for each chunk (in parallel)
+    2. Consolidate chunk summaries into final notes
+
+    Args:
+        chunks: List of dicts with 'transcriptText' and 'chunkIndex' keys
+
+    Returns:
+        dict with markdown notes and total token usage
+    """
+    if not ANTHROPIC_API_KEY:
+        raise ValueError("ANTHROPIC_API_KEY not set")
+
+    if not chunks:
+        return {
+            "markdown": "# Meeting Notes\n\nNo transcript chunks available.",
+            "model": "claude-sonnet-4-20250514",
+            "usage": {"input_tokens": 0, "output_tokens": 0}
+        }
+
+    logger.info(f"Generating notes from {len(chunks)} chunks")
+
+    # Pass 1: Generate summaries for all chunks in parallel
+    summary_tasks = [
+        generate_chunk_summary(
+            chunk.get("transcriptText", chunk.get("transcript_text", "")),
+            chunk.get("chunkIndex", chunk.get("chunk_index", i))
+        )
+        for i, chunk in enumerate(chunks)
+    ]
+
+    chunk_results = await asyncio.gather(*summary_tasks, return_exceptions=True)
+
+    # Collect successful summaries
+    summaries = []
+    total_input_tokens = 0
+    total_output_tokens = 0
+
+    for result in chunk_results:
+        if isinstance(result, Exception):
+            logger.error(f"Chunk summary failed: {result}")
+            continue
+        summaries.append(f"### Chunk {result['chunk_index'] + 1}\n{result['summary']}")
+        total_input_tokens += result["usage"]["input_tokens"]
+        total_output_tokens += result["usage"]["output_tokens"]
+
+    if not summaries:
+        return {
+            "markdown": "# Meeting Notes\n\nFailed to process transcript chunks.",
+            "model": "claude-sonnet-4-20250514",
+            "usage": {"input_tokens": total_input_tokens, "output_tokens": total_output_tokens}
+        }
+
+    # Pass 2: Consolidate summaries into final notes
+    combined_summaries = "\n\n".join(summaries)
+
+    client = AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+
+    logger.info(f"Consolidating {len(summaries)} chunk summaries into final notes")
+
+    message = await client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=8192,
+        system=CONSOLIDATION_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": f"Consolidate these meeting chunk summaries into comprehensive notes:\n\n{combined_summaries}"
+            }
+        ]
+    )
+
+    total_input_tokens += message.usage.input_tokens
+    total_output_tokens += message.usage.output_tokens
+
+    return {
+        "markdown": message.content[0].text,
+        "model": "claude-sonnet-4-20250514",
+        "chunks_processed": len(summaries),
+        "usage": {
+            "input_tokens": total_input_tokens,
+            "output_tokens": total_output_tokens
         }
     }

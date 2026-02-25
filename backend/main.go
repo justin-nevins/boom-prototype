@@ -114,6 +114,10 @@ func main() {
 	app.Post("/api/meetings/:room/end-transcription", endTranscriptionHandler)
 	app.Post("/api/internal/transcript", receiveTranscriptHandler)
 
+	// Transcript chunk persistence API (for crash recovery)
+	app.Post("/api/internal/transcript-chunk", saveTranscriptChunkHandler)
+	app.Get("/api/internal/transcript-chunks/:room", getTranscriptChunksHandler)
+
 	// Egress (recording) API - deprecated, kept for backwards compatibility
 	app.Post("/api/meetings/:room/start-recording", startRecordingHandler)
 	app.Post("/api/meetings/:room/stop-recording", stopRecordingHandler)
@@ -439,6 +443,65 @@ func receiveTranscriptHandler(c *fiber.Ctx) error {
 	broadcastToRoom(msg.RoomName, broadcastJSON)
 
 	return c.JSON(fiber.Map{"status": "broadcast"})
+}
+
+// Transcript chunk handlers for crash recovery
+
+type SaveTranscriptChunkRequest struct {
+	RoomName       string `json:"room_name"`
+	ChunkIndex     int    `json:"chunk_index"`
+	TranscriptText string `json:"transcript_text"`
+	StartTime      string `json:"start_time"`
+	EndTime        string `json:"end_time"`
+	EntryCount     int    `json:"entry_count"`
+}
+
+func saveTranscriptChunkHandler(c *fiber.Ctx) error {
+	var req SaveTranscriptChunkRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	startTime, err := time.Parse(time.RFC3339, req.StartTime)
+	if err != nil {
+		startTime = time.Now()
+	}
+
+	endTime, err := time.Parse(time.RFC3339, req.EndTime)
+	if err != nil {
+		endTime = time.Now()
+	}
+
+	chunk, err := SaveTranscriptChunk(req.RoomName, req.ChunkIndex, req.TranscriptText, startTime, endTime, req.EntryCount)
+	if err != nil {
+		log.Printf("Failed to save transcript chunk: %v", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to save chunk"})
+	}
+
+	log.Printf("Saved transcript chunk %d for room %s (%d entries)", req.ChunkIndex, req.RoomName, req.EntryCount)
+
+	return c.JSON(fiber.Map{
+		"status":     "saved",
+		"chunkId":    chunk.ID,
+		"chunkIndex": chunk.ChunkIndex,
+	})
+}
+
+func getTranscriptChunksHandler(c *fiber.Ctx) error {
+	roomName := c.Params("room")
+
+	chunks, err := GetTranscriptChunks(roomName)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"chunks": []TranscriptChunk{},
+			"count":  0,
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"chunks": chunks,
+		"count":  len(chunks),
+	})
 }
 
 func boolToString(b bool) string {

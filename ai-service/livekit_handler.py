@@ -15,6 +15,7 @@ import numpy as np
 
 from deepgram_streamer import DeepgramStreamerManager
 from transcript_store import transcript_store, TranscriptEntry
+from chunk_persister import chunk_persister_manager
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +107,9 @@ class TranscriptionAgent:
             for participant in self._room.remote_participants.values():
                 await self._subscribe_to_participant(participant)
 
+            # Start chunk persister for crash recovery
+            await chunk_persister_manager.start_persister(self.room_name)
+
             return True
 
         except Exception as e:
@@ -120,6 +124,9 @@ class TranscriptionAgent:
             Formatted transcript for notes generation
         """
         try:
+            # Stop chunk persister (saves final chunk)
+            await chunk_persister_manager.stop_persister(self.room_name)
+
             # Close all Deepgram connections
             if self._deepgram_manager:
                 await self._deepgram_manager.close_all()

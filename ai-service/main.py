@@ -13,7 +13,7 @@ import aiohttp
 from aiohttp import web
 
 from livekit_handler import TranscriptionAgentManager
-from notes_generator import generate_notes_from_text
+from notes_generator import generate_notes_from_text, generate_notes_from_chunks
 
 load_dotenv()
 
@@ -77,6 +77,24 @@ async def save_notes_to_backend(room_name: str, markdown: str, usage: dict):
                     logger.error(f"Failed to save notes: {await resp.text()}")
     except Exception as e:
         logger.error(f"Error saving notes to backend: {e}")
+
+
+async def get_transcript_chunks(room_name: str) -> list:
+    """Retrieve persisted transcript chunks from backend."""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"{BACKEND_API_URL}/api/internal/transcript-chunks/{room_name}"
+            ) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    return data.get("chunks", [])
+                else:
+                    logger.warning(f"Failed to get chunks: {resp.status}")
+                    return []
+    except Exception as e:
+        logger.error(f"Error getting transcript chunks: {e}")
+        return []
 
 
 def run_service():
@@ -181,10 +199,21 @@ def run_service():
 
             logger.info(f"Leaving room: {room_name}")
 
-            # Leave room and get transcript
+            # Leave room and get transcript (this also saves final chunk)
             transcript = await agent_manager.leave_room(room_name)
 
-            if not transcript:
+            # Try to get persisted chunks from backend
+            chunks = await get_transcript_chunks(room_name)
+
+            if chunks and len(chunks) > 0:
+                # Use chunked generation for long meetings
+                logger.info(f"Generating notes from {len(chunks)} persisted chunks for room {room_name}")
+                result = await generate_notes_from_chunks(chunks)
+            elif transcript:
+                # Fall back to single-pass generation for short meetings
+                logger.info(f"Generating notes from transcript for room {room_name} ({len(transcript)} chars)")
+                result = await generate_notes_from_text(transcript)
+            else:
                 logger.warning(f"No transcript available for room {room_name}")
                 return web.json_response({
                     "status": "completed",
@@ -192,11 +221,6 @@ def run_service():
                     "markdown": "# Meeting Notes\n\nNo transcript was captured for this meeting.",
                     "usage": {"input_tokens": 0, "output_tokens": 0}
                 })
-
-            logger.info(f"Generating notes for room {room_name} ({len(transcript)} chars)")
-
-            # Generate notes with Claude
-            result = await generate_notes_from_text(transcript)
 
             # Save to backend
             await save_notes_to_backend(room_name, result["markdown"], result["usage"])
@@ -206,6 +230,7 @@ def run_service():
                 "room_name": room_name,
                 "markdown": result["markdown"],
                 "usage": result["usage"],
+                "chunks_used": len(chunks) if chunks else 0,
             })
 
         except Exception as e:
@@ -223,6 +248,60 @@ def run_service():
             "count": len(active_rooms),
         })
 
+    async def regenerate_notes(request):
+        """
+        Regenerate notes from persisted transcript chunks.
+
+        Use this to retry notes generation after a timeout or failure.
+        The transcript chunks should already be saved in the database.
+
+        Expected payload:
+        {
+            "room_name": "room-xxx"
+        }
+        """
+        try:
+            data = await request.json()
+            room_name = data.get("room_name")
+
+            if not room_name:
+                return web.json_response(
+                    {"error": "room_name required"},
+                    status=400
+                )
+
+            # Get persisted chunks from backend
+            chunks = await get_transcript_chunks(room_name)
+
+            if not chunks:
+                return web.json_response(
+                    {"error": "No transcript chunks found for this room", "room_name": room_name},
+                    status=404
+                )
+
+            logger.info(f"Regenerating notes from {len(chunks)} chunks for room {room_name}")
+
+            # Generate notes from chunks
+            result = await generate_notes_from_chunks(chunks)
+
+            # Save to backend
+            await save_notes_to_backend(room_name, result["markdown"], result["usage"])
+
+            return web.json_response({
+                "status": "completed",
+                "room_name": room_name,
+                "markdown": result["markdown"],
+                "usage": result["usage"],
+                "chunks_used": len(chunks),
+            })
+
+        except Exception as e:
+            logger.error(f"Error regenerating notes: {e}")
+            return web.json_response(
+                {"error": str(e)},
+                status=500
+            )
+
     async def on_shutdown(app):
         """Cleanup on shutdown."""
         logger.info("Shutting down AI service...")
@@ -237,6 +316,7 @@ def run_service():
     app.router.add_post("/join", join_room)
     app.router.add_post("/leave", leave_room)
     app.router.add_get("/rooms", get_rooms)
+    app.router.add_post("/regenerate-notes", regenerate_notes)
 
     logger.info("Starting real-time transcription service on port 8081")
     web.run_app(app, port=8081)
