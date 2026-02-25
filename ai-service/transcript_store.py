@@ -45,6 +45,7 @@ class RoomTranscript:
     entries: List[TranscriptEntry] = field(default_factory=list)
     started_at: datetime = field(default_factory=datetime.utcnow)
     max_entries: int = 10000
+    last_checkpoint_index: int = 0  # Index of last entry saved to DB
 
     def add_entry(self, speaker: str, text: str, is_final: bool = True) -> TranscriptEntry:
         """Add a new transcript entry."""
@@ -83,6 +84,34 @@ class RoomTranscript:
 
     def entry_count(self) -> int:
         return len(self.entries)
+
+    def get_entries_since_checkpoint(self) -> List[TranscriptEntry]:
+        """Get all final entries since last checkpoint."""
+        entries = self.get_final_entries()
+        return entries[self.last_checkpoint_index:]
+
+    def format_entries_since_checkpoint(self) -> str:
+        """Format entries since last checkpoint for chunk persistence."""
+        lines = []
+        for entry in self.get_entries_since_checkpoint():
+            time_str = entry.timestamp.strftime("%H:%M:%S")
+            lines.append(f"[{time_str}] {entry.speaker}: {entry.text}")
+        return "\n".join(lines)
+
+    def mark_checkpoint(self) -> int:
+        """Mark current position as checkpointed, return count of entries saved."""
+        entries = self.get_final_entries()
+        entries_saved = len(entries) - self.last_checkpoint_index
+        self.last_checkpoint_index = len(entries)
+        return entries_saved
+
+    def get_checkpoint_timestamps(self) -> tuple:
+        """Get start and end timestamps for entries since last checkpoint."""
+        entries = self.get_entries_since_checkpoint()
+        if not entries:
+            now = datetime.utcnow()
+            return now, now
+        return entries[0].timestamp, entries[-1].timestamp
 
 
 class TranscriptStore:

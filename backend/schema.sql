@@ -77,3 +77,19 @@ CREATE TABLE IF NOT EXISTS scheduled_meetings (
 
 CREATE INDEX IF NOT EXISTS idx_scheduled_host ON scheduled_meetings(host_user_id);
 CREATE INDEX IF NOT EXISTS idx_scheduled_room ON scheduled_meetings(room_name);
+
+-- transcript_chunks table (for incremental transcript persistence)
+CREATE TABLE IF NOT EXISTS transcript_chunks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    meeting_id INTEGER NOT NULL,
+    chunk_index INTEGER NOT NULL,
+    transcript_text TEXT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    entry_count INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (meeting_id) REFERENCES meetings(id),
+    UNIQUE(meeting_id, chunk_index)
+);
+
+CREATE INDEX IF NOT EXISTS idx_chunks_meeting ON transcript_chunks(meeting_id);

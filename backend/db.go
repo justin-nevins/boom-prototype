@@ -453,3 +453,92 @@ func CancelScheduledMeeting(id, hostUserID int64) error {
 	}
 	return nil
 }
+
+// TranscriptChunk represents a persisted transcript chunk
+type TranscriptChunk struct {
+	ID             int64     `json:"id"`
+	MeetingID      int64     `json:"meetingId"`
+	ChunkIndex     int       `json:"chunkIndex"`
+	TranscriptText string    `json:"transcriptText"`
+	StartTime      time.Time `json:"startTime"`
+	EndTime        time.Time `json:"endTime"`
+	EntryCount     int       `json:"entryCount"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
+
+// SaveTranscriptChunk saves a transcript chunk to the database
+func SaveTranscriptChunk(roomName string, chunkIndex int, text string, startTime, endTime time.Time, entryCount int) (*TranscriptChunk, error) {
+	// Get or create meeting
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		meeting, err = CreateMeeting(roomName, "")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	result, err := db.Exec(
+		`INSERT INTO transcript_chunks (meeting_id, chunk_index, transcript_text, start_time, end_time, entry_count)
+		 VALUES (?, ?, ?, ?, ?, ?)
+		 ON CONFLICT(meeting_id, chunk_index) DO UPDATE SET
+		 transcript_text = ?, start_time = ?, end_time = ?, entry_count = ?`,
+		meeting.ID, chunkIndex, text, startTime, endTime, entryCount,
+		text, startTime, endTime, entryCount,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, _ := result.LastInsertId()
+	return &TranscriptChunk{
+		ID:             id,
+		MeetingID:      meeting.ID,
+		ChunkIndex:     chunkIndex,
+		TranscriptText: text,
+		StartTime:      startTime,
+		EndTime:        endTime,
+		EntryCount:     entryCount,
+		CreatedAt:      time.Now(),
+	}, nil
+}
+
+// GetTranscriptChunks retrieves all chunks for a meeting ordered by chunk_index
+func GetTranscriptChunks(roomName string) ([]TranscriptChunk, error) {
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(
+		`SELECT id, meeting_id, chunk_index, transcript_text, start_time, end_time, entry_count, created_at
+		 FROM transcript_chunks
+		 WHERE meeting_id = ?
+		 ORDER BY chunk_index ASC`,
+		meeting.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var chunks []TranscriptChunk
+	for rows.Next() {
+		var c TranscriptChunk
+		if err := rows.Scan(&c.ID, &c.MeetingID, &c.ChunkIndex, &c.TranscriptText, &c.StartTime, &c.EndTime, &c.EntryCount, &c.CreatedAt); err != nil {
+			continue
+		}
+		chunks = append(chunks, c)
+	}
+	return chunks, nil
+}
+
+// DeleteTranscriptChunks removes all chunks for a meeting
+func DeleteTranscriptChunks(roomName string) error {
+	meeting, err := GetMeetingByRoom(roomName)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("DELETE FROM transcript_chunks WHERE meeting_id = ?", meeting.ID)
+	return err
+}
