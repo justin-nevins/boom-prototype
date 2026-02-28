@@ -8,6 +8,7 @@ require (
 	github.com/livekit/protocol v1.19.0
 	github.com/livekit/server-sdk-go/v2 v2.2.0
 	github.com/joho/godotenv v1.5.1
+	github.com/yuin/goldmark v1.7.8
 	golang.org/x/crypto v0.21.0
 	modernc.org/sqlite v1.28.0
 )

@@ -2,3 +2,4 @@
 frontend/dist/
 frontend/node_modules/
 .vercel
+.env

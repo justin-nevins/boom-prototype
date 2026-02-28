@@ -41,7 +41,11 @@ deploy_backend() {
             -e LIVEKIT_URL="$LIVEKIT_URL" \
             -e FRONTEND_URL=https://meet.nevins.cloud \
             -e AI_SERVICE_URL=http://boom-ai:8081 \
-            -e N8N_EMAIL_WEBHOOK_URL="$N8N_EMAIL_WEBHOOK_URL" \
+            -e SMTP_HOST="$SMTP_HOST" \
+            -e SMTP_PORT="$SMTP_PORT" \
+            -e SMTP_USER="$SMTP_USER" \
+            -e SMTP_PASSWORD="$SMTP_PASSWORD" \
+            -e SMTP_FROM="$SMTP_FROM" \
             -e JWT_SECRET="$JWT_SECRET" \
             -e BOOM_ADMIN_PASSWORD="$BOOM_ADMIN_PASSWORD" \
             boom-backend:latest

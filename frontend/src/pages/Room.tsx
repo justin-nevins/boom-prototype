@@ -309,7 +309,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
       )}
 
       {/* Main content - full width now, no sidebar */}
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-hidden">
         <VideoConference />
       </div>
 
