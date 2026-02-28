@@ -20,6 +20,11 @@ services:
       - LIVEKIT_URL=${LIVEKIT_URL}
       - FRONTEND_URL=http://localhost:3000
       - AI_SERVICE_URL=http://ai-service:8081
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
 
   ai-service:
     build: ./ai-service
