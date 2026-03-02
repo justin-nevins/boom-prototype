@@ -52,9 +52,6 @@ export default function Join() {
       }
       const data = await res.json();
       setMeeting(data);
-      if (data.clientName) {
-        setName(data.clientName);
-      }
     } catch {
       setError('Failed to load meeting info');
     } finally {

@@ -574,11 +574,17 @@ func broadcastToRoom(room string, msg []byte) {
 
 // Scheduling handlers
 
+type AttendeeRequest struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 type CreateScheduledMeetingRequest struct {
-	ClientName  string `json:"clientName"`
-	ClientEmail string `json:"clientEmail"`
-	ScheduledAt string `json:"scheduledAt"` // ISO 8601
-	HostEmail   string `json:"hostEmail,omitempty"` // optional, for API key auth
+	Attendees   []AttendeeRequest `json:"attendees"`
+	ClientName  string            `json:"clientName,omitempty"`  // legacy single-client compat
+	ClientEmail string            `json:"clientEmail,omitempty"` // legacy single-client compat
+	ScheduledAt string            `json:"scheduledAt"`
+	HostEmail   string            `json:"hostEmail,omitempty"`
 }
 
 func createScheduledMeetingHandler(c *fiber.Ctx) error {
@@ -590,6 +596,12 @@ func createScheduledMeetingHandler(c *fiber.Ctx) error {
 	scheduledAt, err := time.Parse(time.RFC3339, req.ScheduledAt)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid date format, use ISO 8601"})
+	}
+
+	// Normalize attendees: support both new array and legacy single-client format
+	attendees := req.Attendees
+	if len(attendees) == 0 && req.ClientName != "" {
+		attendees = []AttendeeRequest{{Name: req.ClientName, Email: req.ClientEmail}}
 	}
 
 	hostUserID := c.Locals("userID").(int64)
@@ -609,29 +621,60 @@ func createScheduledMeetingHandler(c *fiber.Ctx) error {
 
 	roomName := generateRoomName()
 
-	meeting, err := CreateScheduledMeeting(roomName, hostUserID, req.ClientName, req.ClientEmail, scheduledAt)
+	// Use first attendee name as client_name for backwards compat
+	primaryName := ""
+	primaryEmail := ""
+	if len(attendees) > 0 {
+		primaryName = attendees[0].Name
+		primaryEmail = attendees[0].Email
+	}
+
+	meeting, err := CreateScheduledMeeting(roomName, hostUserID, primaryName, primaryEmail, scheduledAt)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to create scheduled meeting"})
 	}
 
-	// Populate host info for email functions
+	// Create attendee records
+	if len(attendees) > 0 {
+		var dbAttendees []MeetingAttendee
+		for _, a := range attendees {
+			dbAttendees = append(dbAttendees, MeetingAttendee{Name: a.Name, Email: a.Email})
+		}
+		if err := CreateMeetingAttendees(meeting.ID, dbAttendees); err != nil {
+			log.Printf("Failed to create attendees: %v", err)
+		}
+		meeting.Attendees, _ = GetAttendeesByMeeting(meeting.ID)
+	}
+
 	meeting.HostName = hostName
 	meeting.HostEmail = hostEmail
 
 	frontendURL := os.Getenv("FRONTEND_URL")
 	inviteLink := fmt.Sprintf("%s/join/%s", frontendURL, roomName)
 
-	// Fire invite and confirmation emails in background
-	go SendInviteEmail(meeting, inviteLink)
+	// Fire invite emails for each attendee with an email
+	for _, a := range meeting.Attendees {
+		if a.Email != "" {
+			attendee := a
+			go SendInviteEmail(meeting, &attendee, inviteLink)
+		}
+	}
 	go SendConfirmationEmail(meeting, inviteLink)
+
+	// Build response with attendees
+	var attendeeList []fiber.Map
+	for _, a := range meeting.Attendees {
+		attendeeList = append(attendeeList, fiber.Map{"name": a.Name, "email": a.Email})
+	}
 
 	return c.JSON(fiber.Map{
 		"id":          meeting.ID,
 		"roomName":    meeting.RoomName,
 		"scheduledAt": meeting.ScheduledAt,
 		"inviteLink":  inviteLink,
-		"clientName":  meeting.ClientName,
-		"clientEmail": meeting.ClientEmail,
+		"attendees":   attendeeList,
+		"clientName":  primaryName,
+		"clientEmail": primaryEmail,
 	})
 }
 
@@ -649,6 +692,10 @@ func listScheduledMeetingsHandler(c *fiber.Ctx) error {
 	frontendURL := os.Getenv("FRONTEND_URL")
 	var results []fiber.Map
 	for _, m := range meetings {
+		var attendeeList []fiber.Map
+		for _, a := range m.Attendees {
+			attendeeList = append(attendeeList, fiber.Map{"name": a.Name, "email": a.Email})
+		}
 		results = append(results, fiber.Map{
 			"id":          m.ID,
 			"roomName":    m.RoomName,
@@ -657,6 +704,7 @@ func listScheduledMeetingsHandler(c *fiber.Ctx) error {
 			"scheduledAt": m.ScheduledAt,
 			"status":      m.Status,
 			"inviteLink":  fmt.Sprintf("%s/join/%s", frontendURL, m.RoomName),
+			"attendees":   attendeeList,
 		})
 	}
 	if results == nil {
@@ -678,8 +726,13 @@ func cancelScheduledMeetingHandler(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// Fire cancellation email in background
-	go SendCancellationEmail(meeting)
+	// Fire cancellation email for each attendee
+	for _, a := range meeting.Attendees {
+		if a.Email != "" {
+			attendee := a
+			go SendCancellationEmail(meeting, &attendee)
+		}
+	}
 
 	return c.JSON(fiber.Map{"status": "cancelled"})
 }
@@ -730,10 +783,16 @@ func getJoinInfoHandler(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": "Meeting not found"})
 	}
 
+	var attendeeNames []string
+	for _, a := range meeting.Attendees {
+		attendeeNames = append(attendeeNames, a.Name)
+	}
+
 	return c.JSON(fiber.Map{
 		"roomName":    meeting.RoomName,
 		"hostName":    meeting.HostName,
 		"clientName":  meeting.ClientName,
+		"attendees":   attendeeNames,
 		"scheduledAt": meeting.ScheduledAt,
 		"status":      meeting.Status,
 	})
