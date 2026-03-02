@@ -368,6 +368,16 @@ type ScheduledMeeting struct {
 	ScheduledAt time.Time `json:"scheduledAt"`
 	Status      string    `json:"status"`
 	CreatedAt   time.Time `json:"createdAt"`
+	Attendees   []MeetingAttendee `json:"attendees,omitempty"`
+}
+
+// MeetingAttendee represents an attendee for a scheduled meeting
+type MeetingAttendee struct {
+	ID        int64     `json:"id"`
+	MeetingID int64     `json:"meetingId"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 // CreateScheduledMeeting inserts a new scheduled meeting
@@ -409,6 +419,7 @@ func GetScheduledMeetingByRoom(roomName string) (*ScheduledMeeting, error) {
 	}
 	m.HostName = hostName
 	m.HostEmail = hostEmail
+	m.Attendees, _ = GetAttendeesByMeeting(m.ID)
 	return &m, nil
 }
 
@@ -436,6 +447,7 @@ func ListScheduledMeetingsByHost(hostUserID int64) ([]ScheduledMeeting, error) {
 		}
 		m.HostName = hostName
 		m.HostEmail = hostEmail
+		m.Attendees, _ = GetAttendeesByMeeting(m.ID)
 		meetings = append(meetings, m)
 	}
 	return meetings, nil
@@ -464,6 +476,7 @@ func CancelScheduledMeeting(id, hostUserID int64) (*ScheduledMeeting, error) {
 	}
 	m.HostName = hostName
 	m.HostEmail = hostEmail
+	m.Attendees, _ = GetAttendeesByMeeting(m.ID)
 
 	result, err := db.Exec("UPDATE scheduled_meetings SET status = 'cancelled' WHERE id = ? AND host_user_id = ?", id, hostUserID)
 	if err != nil {
@@ -475,6 +488,52 @@ func CancelScheduledMeeting(id, hostUserID int64) (*ScheduledMeeting, error) {
 	}
 	m.Status = "cancelled"
 	return &m, nil
+}
+
+// CreateMeetingAttendees inserts attendees for a scheduled meeting
+func CreateMeetingAttendees(meetingID int64, attendees []MeetingAttendee) error {
+	for _, a := range attendees {
+		_, err := db.Exec(
+			"INSERT OR IGNORE INTO meeting_attendees (meeting_id, name, email) VALUES (?, ?, ?)",
+			meetingID, a.Name, a.Email,
+		)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// GetAttendeesByMeeting returns all attendees for a scheduled meeting
+func GetAttendeesByMeeting(meetingID int64) ([]MeetingAttendee, error) {
+	rows, err := db.Query(
+		"SELECT id, meeting_id, name, email, created_at FROM meeting_attendees WHERE meeting_id = ? ORDER BY id ASC",
+		meetingID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var attendees []MeetingAttendee
+	for rows.Next() {
+		var a MeetingAttendee
+		var email sql.NullString
+		if err := rows.Scan(&a.ID, &a.MeetingID, &a.Name, &email, &a.CreatedAt); err != nil {
+			continue
+		}
+		if email.Valid {
+			a.Email = email.String
+		}
+		attendees = append(attendees, a)
+	}
+	return attendees, nil
+}
+
+// DeleteAttendeesByMeeting removes all attendees for a meeting
+func DeleteAttendeesByMeeting(meetingID int64) error {
+	_, err := db.Exec("DELETE FROM meeting_attendees WHERE meeting_id = ?", meetingID)
+	return err
 }
 
 // TranscriptChunk represents a persisted transcript chunk
@@ -604,6 +663,7 @@ func GetUpcomingMeetingsForReminder(windowStart, windowEnd time.Time) ([]Schedul
 		}
 		m.HostName = hostName
 		m.HostEmail = hostEmail
+		m.Attendees, _ = GetAttendeesByMeeting(m.ID)
 		meetings = append(meetings, m)
 	}
 	return meetings, nil

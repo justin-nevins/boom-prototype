@@ -4,11 +4,17 @@ import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
 
+interface Attendee {
+  name: string;
+  email: string;
+}
+
 interface ScheduledMeeting {
   id: number;
   roomName: string;
   clientName: string;
   clientEmail: string;
+  attendees?: Attendee[];
   scheduledAt: string;
   status: string;
   inviteLink: string;
@@ -26,12 +32,23 @@ export default function Home() {
   const [error, setError] = useState('');
 
   // Schedule form state
-  const [scheduleForm, setScheduleForm] = useState({
-    clientName: '',
-    clientEmail: '',
-    date: '',
-    time: '',
-  });
+  const [attendees, setAttendees] = useState<Attendee[]>([{ name: '', email: '' }]);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+  const addAttendee = () => {
+    setAttendees([...attendees, { name: '', email: '' }]);
+  };
+
+  const removeAttendee = (index: number) => {
+    setAttendees(attendees.filter((_, i) => i !== index));
+  };
+
+  const updateAttendee = (index: number, field: keyof Attendee, value: string) => {
+    const updated = [...attendees];
+    updated[index] = { ...updated[index], [field]: value };
+    setAttendees(updated);
+  };
+
   const [scheduling, setScheduling] = useState(false);
   const [scheduledLink, setScheduledLink] = useState('');
 
@@ -94,7 +111,8 @@ export default function Home() {
     setScheduling(true);
     setScheduledLink('');
     try {
-      const scheduledAt = new Date(`${scheduleForm.date}T${scheduleForm.time}`).toISOString();
+      const scheduledAt = new Date(`${scheduleDate}T${scheduleTime}`).toISOString();
+      const validAttendees = attendees.filter(a => a.name.trim());
       const res = await fetch(`${BACKEND_URL}/api/scheduled-meetings`, {
         method: 'POST',
         headers: {
@@ -102,15 +120,16 @@ export default function Home() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          clientName: scheduleForm.clientName,
-          clientEmail: scheduleForm.clientEmail,
+          attendees: validAttendees,
           scheduledAt,
         }),
       });
       if (!res.ok) throw new Error('Failed to schedule meeting');
       const data = await res.json();
       setScheduledLink(data.inviteLink);
-      setScheduleForm({ clientName: '', clientEmail: '', date: '', time: '' });
+      setAttendees([{ name: '', email: '' }]);
+      setScheduleDate('');
+      setScheduleTime('');
       fetchMyMeetings();
     } catch (err) {
       console.error('Failed to schedule:', err);
@@ -332,31 +351,50 @@ export default function Home() {
                   </div>
                 ) : (
                   <form onSubmit={scheduleMeeting} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Client Name <span className="text-[#D93D1A]">*</span>
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-sm font-medium text-slate-300">
+                          Attendees <span className="text-[#D93D1A]">*</span>
                         </label>
-                        <input
-                          type="text"
-                          required
-                          value={scheduleForm.clientName}
-                          onChange={(e) => setScheduleForm({ ...scheduleForm, clientName: e.target.value })}
-                          placeholder="Client name"
-                          className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
-                        />
+                        <button
+                          type="button"
+                          onClick={addAttendee}
+                          className="text-xs text-[#2B88D9] hover:text-[#2477c2] transition-colors"
+                        >
+                          + Add attendee
+                        </button>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                          Client Email
-                        </label>
-                        <input
-                          type="email"
-                          value={scheduleForm.clientEmail}
-                          onChange={(e) => setScheduleForm({ ...scheduleForm, clientEmail: e.target.value })}
-                          placeholder="client@email.com"
-                          className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
-                        />
+                      <div className="space-y-2">
+                        {attendees.map((attendee, index) => (
+                          <div key={index} className="flex gap-2">
+                            <input
+                              type="text"
+                              required
+                              value={attendee.name}
+                              onChange={(e) => updateAttendee(index, 'name', e.target.value)}
+                              placeholder="Name"
+                              className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
+                            />
+                            <input
+                              type="email"
+                              value={attendee.email}
+                              onChange={(e) => updateAttendee(index, 'email', e.target.value)}
+                              placeholder="Email"
+                              className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
+                            />
+                            {attendees.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeAttendee(index)}
+                                className="px-2 text-slate-500 hover:text-red-400 transition-colors"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -368,8 +406,8 @@ export default function Home() {
                         <input
                           type="date"
                           required
-                          value={scheduleForm.date}
-                          onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
+                          value={scheduleDate}
+                          onChange={(e) => setScheduleDate(e.target.value)}
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
@@ -380,8 +418,8 @@ export default function Home() {
                         <input
                           type="time"
                           required
-                          value={scheduleForm.time}
-                          onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
+                          value={scheduleTime}
+                          onChange={(e) => setScheduleTime(e.target.value)}
                           className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#2B88D9] focus:border-transparent text-sm"
                         />
                       </div>
@@ -410,13 +448,19 @@ export default function Home() {
                 <div key={m.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-white font-medium">{m.clientName || 'No client name'}</p>
+                      <p className="text-white font-medium">
+                        {m.attendees && m.attendees.length > 0
+                          ? m.attendees.map(a => a.name).join(', ')
+                          : m.clientName || 'No attendees'}
+                      </p>
                       <p className="text-slate-400 text-sm">
                         {new Date(m.scheduledAt).toLocaleDateString()} at{' '}
                         {new Date(m.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
-                      {m.clientEmail && (
-                        <p className="text-slate-500 text-xs mt-0.5">{m.clientEmail}</p>
+                      {m.attendees && m.attendees.length > 0 && (
+                        <p className="text-slate-500 text-xs mt-0.5">
+                          {m.attendees.filter(a => a.email).map(a => a.email).join(', ')}
+                        </p>
                       )}
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded ${

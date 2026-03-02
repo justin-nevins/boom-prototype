@@ -274,7 +274,7 @@ func buildMIMEMessageWithAttachment(from, to, toName, subject, htmlBody string, 
 // ---------------------------------------------------------------------------
 
 // SendInviteEmail sends a meeting invite to the client with ICS attachment
-func SendInviteEmail(meeting *ScheduledMeeting, inviteLink string) error {
+func SendInviteEmail(meeting *ScheduledMeeting, attendee *MeetingAttendee, inviteLink string) error {
 	cfg := getSMTPConfig()
 	if !cfg.isConfigured() {
 		log.Println("SMTP not configured, skipping invite email")
@@ -301,11 +301,11 @@ func SendInviteEmail(meeting *ScheduledMeeting, inviteLink string) error {
 		Data:        icsData,
 	}
 
-	if err := cfg.send(meeting.ClientEmail, meeting.ClientName, subject, htmlBody, []emailAttachment{attachment}); err != nil {
-		log.Printf("Failed to send invite email to %s: %v", meeting.ClientEmail, err)
+	if err := cfg.send(attendee.Email, attendee.Name, subject, htmlBody, []emailAttachment{attachment}); err != nil {
+		log.Printf("Failed to send invite email to %s: %v", attendee.Email, err)
 		return err
 	}
-	log.Printf("Invite email sent to %s", meeting.ClientEmail)
+	log.Printf("Invite email sent to %s", attendee.Email)
 	return nil
 }
 
@@ -328,20 +328,20 @@ func SendConfirmationEmail(meeting *ScheduledMeeting, inviteLink string) error {
 }
 
 // SendCancellationEmail notifies the client that a meeting was cancelled
-func SendCancellationEmail(meeting *ScheduledMeeting) error {
+func SendCancellationEmail(meeting *ScheduledMeeting, attendee *MeetingAttendee) error {
 	cfg := getSMTPConfig()
-	if !cfg.isConfigured() || meeting.ClientEmail == "" {
+	if !cfg.isConfigured() || attendee.Email == "" {
 		return nil
 	}
 
 	subject := fmt.Sprintf("Meeting cancelled — %s", meeting.ScheduledAt.Format("Jan 2 at 3:04 PM"))
 	htmlBody := buildCancellationEmailHTML(meeting)
 
-	if err := cfg.send(meeting.ClientEmail, meeting.ClientName, subject, htmlBody, nil); err != nil {
-		log.Printf("Failed to send cancellation email to %s: %v", meeting.ClientEmail, err)
+	if err := cfg.send(attendee.Email, attendee.Name, subject, htmlBody, nil); err != nil {
+		log.Printf("Failed to send cancellation email to %s: %v", attendee.Email, err)
 		return err
 	}
-	log.Printf("Cancellation email sent to %s", meeting.ClientEmail)
+	log.Printf("Cancellation email sent to %s", attendee.Email)
 	return nil
 }
 
@@ -354,11 +354,13 @@ func SendReminderEmail(meeting *ScheduledMeeting, inviteLink string) error {
 
 	subject := "Reminder: Your meeting starts in ~15 minutes"
 
-	// Send to client
-	if meeting.ClientEmail != "" {
-		clientHTML := buildReminderEmailHTML(meeting, inviteLink, false)
-		if err := cfg.send(meeting.ClientEmail, meeting.ClientName, subject, clientHTML, nil); err != nil {
-			log.Printf("Failed to send reminder to client %s: %v", meeting.ClientEmail, err)
+	// Send to all attendees
+	for _, a := range meeting.Attendees {
+		if a.Email != "" {
+			clientHTML := buildReminderEmailHTML(meeting, inviteLink, false)
+			if err := cfg.send(a.Email, a.Name, subject, clientHTML, nil); err != nil {
+				log.Printf("Failed to send reminder to attendee %s: %v", a.Email, err)
+			}
 		}
 	}
 

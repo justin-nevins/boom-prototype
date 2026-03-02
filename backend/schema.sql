@@ -93,3 +93,14 @@ CREATE TABLE IF NOT EXISTS transcript_chunks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_chunks_meeting ON transcript_chunks(meeting_id);
+
+-- meeting_attendees table (multi-attendee support)
+CREATE TABLE IF NOT EXISTS meeting_attendees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    meeting_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (meeting_id) REFERENCES scheduled_meetings(id) ON DELETE CASCADE,
+    UNIQUE(meeting_id, email)
+);
