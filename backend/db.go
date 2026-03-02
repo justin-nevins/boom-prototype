@@ -34,6 +34,9 @@ func initDB() error {
 		return err
 	}
 
+	// Idempotent migration: add reminder_sent column for scheduling reminders
+	db.Exec("ALTER TABLE scheduled_meetings ADD COLUMN reminder_sent INTEGER DEFAULT 0")
+
 	log.Println("Database initialized")
 	return nil
 }
@@ -359,6 +362,7 @@ type ScheduledMeeting struct {
 	RoomName    string    `json:"roomName"`
 	HostUserID  int64     `json:"hostUserId"`
 	HostName    string    `json:"hostName,omitempty"`
+	HostEmail   string    `json:"-"`
 	ClientName  string    `json:"clientName"`
 	ClientEmail string    `json:"clientEmail"`
 	ScheduledAt time.Time `json:"scheduledAt"`
@@ -392,25 +396,26 @@ func CreateScheduledMeeting(roomName string, hostUserID int64, clientName, clien
 // GetScheduledMeetingByRoom retrieves a scheduled meeting by room name
 func GetScheduledMeetingByRoom(roomName string) (*ScheduledMeeting, error) {
 	var m ScheduledMeeting
-	var hostName string
+	var hostName, hostEmail string
 	err := db.QueryRow(
-		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, u.email, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
 		 FROM scheduled_meetings sm
 		 JOIN users u ON sm.host_user_id = u.id
 		 WHERE sm.room_name = ?`,
 		roomName,
-	).Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt)
+	).Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &hostEmail, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
 	m.HostName = hostName
+	m.HostEmail = hostEmail
 	return &m, nil
 }
 
 // ListScheduledMeetingsByHost returns scheduled meetings for a host
 func ListScheduledMeetingsByHost(hostUserID int64) ([]ScheduledMeeting, error) {
 	rows, err := db.Query(
-		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, u.email, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
 		 FROM scheduled_meetings sm
 		 JOIN users u ON sm.host_user_id = u.id
 		 WHERE sm.host_user_id = ? AND sm.status IN ('scheduled', 'active')
@@ -425,11 +430,12 @@ func ListScheduledMeetingsByHost(hostUserID int64) ([]ScheduledMeeting, error) {
 	var meetings []ScheduledMeeting
 	for rows.Next() {
 		var m ScheduledMeeting
-		var hostName string
-		if err := rows.Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt); err != nil {
+		var hostName, hostEmail string
+		if err := rows.Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &hostEmail, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt); err != nil {
 			continue
 		}
 		m.HostName = hostName
+		m.HostEmail = hostEmail
 		meetings = append(meetings, m)
 	}
 	return meetings, nil
@@ -442,16 +448,33 @@ func UpdateScheduledMeetingStatus(id int64, status string) error {
 }
 
 // CancelScheduledMeeting cancels a scheduled meeting owned by the given user
-func CancelScheduledMeeting(id, hostUserID int64) error {
+func CancelScheduledMeeting(id, hostUserID int64) (*ScheduledMeeting, error) {
+	// First fetch the meeting details for email notification
+	var m ScheduledMeeting
+	var hostName, hostEmail string
+	err := db.QueryRow(
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, u.email, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		 FROM scheduled_meetings sm
+		 JOIN users u ON sm.host_user_id = u.id
+		 WHERE sm.id = ? AND sm.host_user_id = ?`,
+		id, hostUserID,
+	).Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &hostEmail, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt)
+	if err != nil {
+		return nil, fmt.Errorf("meeting not found or not owned by user")
+	}
+	m.HostName = hostName
+	m.HostEmail = hostEmail
+
 	result, err := db.Exec("UPDATE scheduled_meetings SET status = 'cancelled' WHERE id = ? AND host_user_id = ?", id, hostUserID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	rows, _ := result.RowsAffected()
 	if rows == 0 {
-		return fmt.Errorf("meeting not found or not owned by user")
+		return nil, fmt.Errorf("meeting not found or not owned by user")
 	}
-	return nil
+	m.Status = "cancelled"
+	return &m, nil
 }
 
 // TranscriptChunk represents a persisted transcript chunk
@@ -540,5 +563,54 @@ func DeleteTranscriptChunks(roomName string) error {
 	}
 
 	_, err = db.Exec("DELETE FROM transcript_chunks WHERE meeting_id = ?", meeting.ID)
+	return err
+}
+
+// GetUserByEmail retrieves a user by email address
+func GetUserByEmail(email string) (*User, error) {
+	var u User
+	err := db.QueryRow(
+		"SELECT id, email, name, created_at FROM users WHERE email = ?", email,
+	).Scan(&u.ID, &u.Email, &u.Name, &u.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+// GetUpcomingMeetingsForReminder returns scheduled meetings in the given time window that haven't had reminders sent
+func GetUpcomingMeetingsForReminder(windowStart, windowEnd time.Time) ([]ScheduledMeeting, error) {
+	rows, err := db.Query(
+		`SELECT sm.id, sm.room_name, sm.host_user_id, u.name, u.email, sm.client_name, sm.client_email, sm.scheduled_at, sm.status, sm.created_at
+		 FROM scheduled_meetings sm
+		 JOIN users u ON sm.host_user_id = u.id
+		 WHERE sm.status = 'scheduled'
+		   AND sm.reminder_sent = 0
+		   AND sm.scheduled_at >= ?
+		   AND sm.scheduled_at <= ?`,
+		windowStart, windowEnd,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var meetings []ScheduledMeeting
+	for rows.Next() {
+		var m ScheduledMeeting
+		var hostName, hostEmail string
+		if err := rows.Scan(&m.ID, &m.RoomName, &m.HostUserID, &hostName, &hostEmail, &m.ClientName, &m.ClientEmail, &m.ScheduledAt, &m.Status, &m.CreatedAt); err != nil {
+			continue
+		}
+		m.HostName = hostName
+		m.HostEmail = hostEmail
+		meetings = append(meetings, m)
+	}
+	return meetings, nil
+}
+
+// MarkReminderSent marks a scheduled meeting's reminder as sent
+func MarkReminderSent(id int64) error {
+	_, err := db.Exec("UPDATE scheduled_meetings SET reminder_sent = 1 WHERE id = ?", id)
 	return err
 }

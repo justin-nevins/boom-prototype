@@ -48,6 +48,7 @@ deploy_backend() {
             -e SMTP_FROM="$SMTP_FROM" \
             -e JWT_SECRET="$JWT_SECRET" \
             -e BOOM_ADMIN_PASSWORD="$BOOM_ADMIN_PASSWORD" \
+            -e BOOM_API_KEY="$BOOM_API_KEY" \
             boom-backend:latest
         rm -rf /tmp/boom-prototype
         echo "Backend deployed successfully"

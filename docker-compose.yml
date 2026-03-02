@@ -25,6 +25,7 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - SMTP_FROM=${SMTP_FROM}
+      - BOOM_API_KEY=${BOOM_API_KEY}
 
   ai-service:
     build: ./ai-service

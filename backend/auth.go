@@ -171,6 +171,43 @@ func authRequired() fiber.Handler {
 	}
 }
 
+// apiKeyOrAuth is middleware that accepts either a valid JWT Bearer token
+// or a valid X-API-Key header matching the BOOM_API_KEY env var.
+// This allows AI chatbots to schedule meetings without JWT login.
+func apiKeyOrAuth() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Try API key first
+		apiKey := c.Get("X-API-Key")
+		if apiKey != "" {
+			expected := os.Getenv("BOOM_API_KEY")
+			if expected != "" && apiKey == expected {
+				// Set synthetic identity for API key callers
+				// Handler will resolve actual host from request body
+				c.Locals("userID", int64(1))
+				c.Locals("userEmail", "api-bot@boom.video")
+				c.Locals("userName", "API Bot")
+				return c.Next()
+			}
+			return c.Status(401).JSON(fiber.Map{"error": "Invalid API key"})
+		}
+
+		// Fall through to JWT
+		authHeader := c.Get("Authorization")
+		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+			return c.Status(401).JSON(fiber.Map{"error": "Unauthorized"})
+		}
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		claims, err := validateJWT(token)
+		if err != nil {
+			return c.Status(401).JSON(fiber.Map{"error": "Invalid token"})
+		}
+		c.Locals("userID", claims.UserID)
+		c.Locals("userEmail", claims.Email)
+		c.Locals("userName", claims.Name)
+		return c.Next()
+	}
+}
+
 // Login handler
 type LoginRequest struct {
 	Email    string `json:"email"`
