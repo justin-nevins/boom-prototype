@@ -62,6 +62,8 @@ func main() {
 	// Initialize auth (seed users, set JWT secret)
 	initAuth()
 
+	StartReminderJob()
+
 	roomClient = lksdk.NewRoomServiceClient(livekitHost, apiKey, apiSecret)
 	egressClient = lksdk.NewEgressClient(livekitHost, apiKey, apiSecret)
 
@@ -71,7 +73,7 @@ func main() {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     os.Getenv("FRONTEND_URL"),
 		AllowMethods:     "GET, POST, DELETE, OPTIONS",
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-API-Key",
 		AllowCredentials: true,
 	}))
 
@@ -93,7 +95,7 @@ func main() {
 	app.Get("/api/rooms/:id", getRoom)
 
 	// Scheduling routes
-	app.Post("/api/scheduled-meetings", authRequired(), createScheduledMeetingHandler)
+	app.Post("/api/scheduled-meetings", apiKeyOrAuth(), createScheduledMeetingHandler)
 	app.Get("/api/scheduled-meetings", authRequired(), listScheduledMeetingsHandler)
 	app.Delete("/api/scheduled-meetings/:id", authRequired(), cancelScheduledMeetingHandler)
 	app.Post("/api/scheduled-meetings/:id/start", authRequired(), startScheduledMeetingHandler)
@@ -576,6 +578,7 @@ type CreateScheduledMeetingRequest struct {
 	ClientName  string `json:"clientName"`
 	ClientEmail string `json:"clientEmail"`
 	ScheduledAt string `json:"scheduledAt"` // ISO 8601
+	HostEmail   string `json:"hostEmail,omitempty"` // optional, for API key auth
 }
 
 func createScheduledMeetingHandler(c *fiber.Ctx) error {
@@ -590,6 +593,20 @@ func createScheduledMeetingHandler(c *fiber.Ctx) error {
 	}
 
 	hostUserID := c.Locals("userID").(int64)
+	hostName := c.Locals("userName").(string)
+	hostEmail := c.Locals("userEmail").(string)
+
+	// If API key auth and hostEmail provided, resolve actual host user
+	if hostEmail == "api-bot@boom.video" && req.HostEmail != "" {
+		user, err := GetUserByEmail(req.HostEmail)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "Unknown host email"})
+		}
+		hostUserID = user.ID
+		hostName = user.Name
+		hostEmail = user.Email
+	}
+
 	roomName := generateRoomName()
 
 	meeting, err := CreateScheduledMeeting(roomName, hostUserID, req.ClientName, req.ClientEmail, scheduledAt)
@@ -597,8 +614,16 @@ func createScheduledMeetingHandler(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to create scheduled meeting"})
 	}
 
+	// Populate host info for email functions
+	meeting.HostName = hostName
+	meeting.HostEmail = hostEmail
+
 	frontendURL := os.Getenv("FRONTEND_URL")
 	inviteLink := fmt.Sprintf("%s/join/%s", frontendURL, roomName)
+
+	// Fire invite and confirmation emails in background
+	go SendInviteEmail(meeting, inviteLink)
+	go SendConfirmationEmail(meeting, inviteLink)
 
 	return c.JSON(fiber.Map{
 		"id":          meeting.ID,
@@ -648,9 +673,13 @@ func cancelScheduledMeetingHandler(c *fiber.Ctx) error {
 
 	hostUserID := c.Locals("userID").(int64)
 
-	if err := CancelScheduledMeeting(id, hostUserID); err != nil {
+	meeting, err := CancelScheduledMeeting(id, hostUserID)
+	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	// Fire cancellation email in background
+	go SendCancellationEmail(meeting)
 
 	return c.JSON(fiber.Map{"status": "cancelled"})
 }
