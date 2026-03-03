@@ -176,9 +176,14 @@ class TranscriptionAgent:
     async def _subscribe_to_participant(self, participant: rtc.RemoteParticipant):
         """Subscribe to a participant's audio tracks."""
         speaker_name = participant.name or participant.identity or "Unknown"
-        logger.info(f"[{self.room_name}] Subscribing to {speaker_name}")
+        pubs = participant.track_publications
+        logger.info(f"[{self.room_name}] Subscribing to {speaker_name} ({len(pubs)} publications)")
 
-        for publication in participant.track_publications.values():
+        for pub_sid, publication in pubs.items():
+            logger.info(
+                f"[{self.room_name}]   Track pub {pub_sid}: kind={publication.kind}, "
+                f"subscribed={publication.subscribed}, track={'yes' if publication.track else 'no'}"
+            )
             if publication.track and publication.kind == rtc.TrackKind.KIND_AUDIO:
                 await self._start_audio_stream(
                     participant.identity,
