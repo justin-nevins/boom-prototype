@@ -154,14 +154,16 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
       }
     };
 
+    const onPlaybackChanged = () => {
+      setAudioBlocked(!room.canPlaybackAudio);
+    };
+
     // Check immediately and on changes
     checkAudio();
-    room.on('audioPlaybackChanged', () => {
-      setAudioBlocked(!room.canPlaybackAudio);
-    });
+    room.on('audioPlaybackChanged', onPlaybackChanged);
 
     return () => {
-      room.off('audioPlaybackChanged');
+      room.off('audioPlaybackChanged', onPlaybackChanged);
     };
   }, [room, room.state]);
 
