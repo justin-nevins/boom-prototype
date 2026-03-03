@@ -216,10 +216,12 @@ def run_service():
                 result = await generate_notes_from_text(transcript, note_type)
             else:
                 logger.warning(f"No transcript available for room {room_name}")
+                no_transcript_md = "# Meeting Notes\n\nNo transcript was captured for this meeting."
+                await save_notes_to_backend(room_name, no_transcript_md, {"input_tokens": 0, "output_tokens": 0})
                 return web.json_response({
                     "status": "completed",
                     "room_name": room_name,
-                    "markdown": "# Meeting Notes\n\nNo transcript was captured for this meeting.",
+                    "markdown": no_transcript_md,
                     "usage": {"input_tokens": 0, "output_tokens": 0}
                 })
 
