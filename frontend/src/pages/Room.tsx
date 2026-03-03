@@ -142,6 +142,33 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
   const [showNotes, setShowNotes] = useState(false);
   const [endingMeeting, setEndingMeeting] = useState(false);
   const [noteType, setNoteType] = useState<NoteType>('basic');
+  const [audioBlocked, setAudioBlocked] = useState(false);
+
+  // Detect if audio playback is blocked (mobile autoplay policy)
+  useEffect(() => {
+    if (room.state !== 'connected') return;
+
+    const checkAudio = () => {
+      if (!room.canPlaybackAudio) {
+        setAudioBlocked(true);
+      }
+    };
+
+    // Check immediately and on changes
+    checkAudio();
+    room.on('audioPlaybackChanged', () => {
+      setAudioBlocked(!room.canPlaybackAudio);
+    });
+
+    return () => {
+      room.off('audioPlaybackChanged');
+    };
+  }, [room, room.state]);
+
+  const enableAudio = async () => {
+    await room.startAudio();
+    setAudioBlocked(false);
+  };
 
   // Start transcription when room connects
   useEffect(() => {
@@ -323,6 +350,19 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
             <p className="text-slate-400">{processingStage}</p>
             <p className="text-slate-500 text-sm mt-4">This may take a few minutes...</p>
           </div>
+        </div>
+      )}
+
+      {/* Audio blocked banner (mobile autoplay policy) */}
+      {audioBlocked && (
+        <div className="bg-amber-900/80 px-4 py-2 flex items-center justify-center gap-3">
+          <span className="text-amber-200 text-sm">Audio playback is blocked by your browser.</span>
+          <button
+            onClick={enableAudio}
+            className="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium rounded transition-colors"
+          >
+            Tap to Enable Audio
+          </button>
         </div>
       )}
 
