@@ -197,7 +197,8 @@ def run_service():
                     status=404
                 )
 
-            logger.info(f"Leaving room: {room_name}")
+            note_type = data.get("note_type", "basic")
+            logger.info(f"Leaving room: {room_name} (note_type: {note_type})")
 
             # Leave room and get transcript (this also saves final chunk)
             transcript = await agent_manager.leave_room(room_name)
@@ -208,11 +209,11 @@ def run_service():
             if chunks and len(chunks) > 0:
                 # Use chunked generation for long meetings
                 logger.info(f"Generating notes from {len(chunks)} persisted chunks for room {room_name}")
-                result = await generate_notes_from_chunks(chunks)
+                result = await generate_notes_from_chunks(chunks, note_type)
             elif transcript:
                 # Fall back to single-pass generation for short meetings
                 logger.info(f"Generating notes from transcript for room {room_name} ({len(transcript)} chars)")
-                result = await generate_notes_from_text(transcript)
+                result = await generate_notes_from_text(transcript, note_type)
             else:
                 logger.warning(f"No transcript available for room {room_name}")
                 return web.json_response({
@@ -279,10 +280,11 @@ def run_service():
                     status=404
                 )
 
-            logger.info(f"Regenerating notes from {len(chunks)} chunks for room {room_name}")
+            note_type = data.get("note_type", "basic")
+            logger.info(f"Regenerating {note_type} notes from {len(chunks)} chunks for room {room_name}")
 
             # Generate notes from chunks
-            result = await generate_notes_from_chunks(chunks)
+            result = await generate_notes_from_chunks(chunks, note_type)
 
             # Save to backend
             await save_notes_to_backend(room_name, result["markdown"], result["usage"])

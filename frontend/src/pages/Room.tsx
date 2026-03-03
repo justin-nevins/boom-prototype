@@ -132,6 +132,8 @@ export default function Room() {
   );
 }
 
+type NoteType = 'basic' | 'working_group';
+
 function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => void }) {
   const room = useRoomContext();
   const [transcriptionStatus, setTranscriptionStatus] = useState<TranscriptionStatus>('idle');
@@ -139,6 +141,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
   const [notes, setNotes] = useState<string>('');
   const [showNotes, setShowNotes] = useState(false);
   const [endingMeeting, setEndingMeeting] = useState(false);
+  const [noteType, setNoteType] = useState<NoteType>('basic');
 
   // Start transcription when room connects
   useEffect(() => {
@@ -174,6 +177,8 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
       // End transcription and generate notes
       const res = await fetch(`${BACKEND_URL}/api/meetings/${roomName}/end-transcription`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note_type: noteType }),
       });
       const data = await res.json();
 
@@ -263,10 +268,23 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="noteType" className="text-slate-400 text-xs">Notes:</label>
+            <select
+              id="noteType"
+              value={noteType}
+              onChange={(e) => setNoteType(e.target.value as NoteType)}
+              disabled={endingMeeting}
+              className="px-2 py-1 bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+            >
+              <option value="basic">Basic</option>
+              <option value="working_group">Working Group</option>
+            </select>
+          </div>
           <BackgroundToggle />
-          <EmailSubscription 
-            roomName={roomName} 
-            participantName={sessionStorage.getItem('participantName') || 'Guest'} 
+          <EmailSubscription
+            roomName={roomName}
+            participantName={sessionStorage.getItem('participantName') || 'Guest'}
           />
           <CopyLinkButton roomName={roomName} />
 

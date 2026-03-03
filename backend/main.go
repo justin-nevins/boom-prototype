@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -400,9 +401,19 @@ func startTranscriptionHandler(c *fiber.Ctx) error {
 func endTranscriptionHandler(c *fiber.Ctx) error {
 	roomName := c.Params("room")
 
+	// Parse note_type from request body (defaults to "basic")
+	var body struct {
+		NoteType string `json:"note_type"`
+	}
+	c.BodyParser(&body)
+	if body.NoteType == "" {
+		body.NoteType = "basic"
+	}
+
 	// Call AI service to leave the room and generate notes
-	payload := []byte(`{"room_name": "` + roomName + `"}`)
-	resp, err := http.Post(aiServiceURL+"/leave", "application/json", bytes.NewBuffer(payload))
+	payloadMap := map[string]string{"room_name": roomName, "note_type": body.NoteType}
+	payloadBytes, _ := json.Marshal(payloadMap)
+	resp, err := http.Post(aiServiceURL+"/leave", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
 		log.Printf("Failed to end transcription: %v", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to connect to AI service"})
