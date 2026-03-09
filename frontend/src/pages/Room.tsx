@@ -50,6 +50,7 @@ export default function Room() {
   const [token, setToken] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [wasConnected, setWasConnected] = useState(false);
+  const [processingNotes, setProcessingNotes] = useState(false);
 
   useEffect(() => {
     const participantName = sessionStorage.getItem('participantName') || 'Guest';
@@ -78,14 +79,14 @@ export default function Room() {
   }, [roomName]);
 
   const handleDisconnect = (reason?: DisconnectReason) => {
-    console.log('LiveKit disconnected, reason:', reason, 'wasConnected:', wasConnected);
-    if (wasConnected) {
-      // Normal disconnect after being in a meeting
-      navigate('/');
-    } else {
-      // Never fully connected — show error instead of silent redirect
+    console.log('LiveKit disconnected, reason:', reason, 'wasConnected:', wasConnected, 'processingNotes:', processingNotes);
+    if (!wasConnected) {
       setError('Failed to connect to meeting. The video connection could not be established.');
+    } else if (!processingNotes) {
+      // Normal disconnect (e.g. user clicked Leave in LiveKit controls)
+      navigate('/');
     }
+    // If processingNotes is true, stay on page — notes modal will handle navigation
   };
 
   if (error) {
@@ -125,7 +126,7 @@ export default function Room() {
           data-lk-theme="default"
           style={{ height: '100%' }}
         >
-          <RoomContent roomName={roomName!} onLeave={handleDisconnect} />
+          <RoomContent roomName={roomName!} onLeave={handleDisconnect} onProcessingNotes={setProcessingNotes} />
         </LiveKitRoom>
       </div>
     </ErrorBoundary>
@@ -134,7 +135,7 @@ export default function Room() {
 
 type NoteType = 'basic' | 'working_group';
 
-function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => void }) {
+function RoomContent({ roomName, onLeave, onProcessingNotes }: { roomName: string; onLeave: () => void; onProcessingNotes: (v: boolean) => void }) {
   const room = useRoomContext();
   const [transcriptionStatus, setTranscriptionStatus] = useState<TranscriptionStatus>('idle');
   const [processingStage, setProcessingStage] = useState<string>('');
@@ -201,6 +202,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
     setEndingMeeting(true);
     setTranscriptionStatus('processing');
     setProcessingStage('Generating notes...');
+    onProcessingNotes(true);
 
     try {
       // End transcription and generate notes
@@ -219,11 +221,13 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
       } else {
         setTranscriptionStatus('failed');
         setProcessingStage('Failed to end transcription');
+        onProcessingNotes(false);
       }
     } catch (err) {
       console.error('Error ending meeting:', err);
       setTranscriptionStatus('failed');
       setProcessingStage('Error ending meeting');
+      onProcessingNotes(false);
     }
   };
 
@@ -261,6 +265,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
         } else {
           setTranscriptionStatus('failed');
           setProcessingStage('Timed out waiting for notes');
+          onProcessingNotes(false);
         }
       } catch (err) {
         attempts++;
@@ -274,6 +279,7 @@ function RoomContent({ roomName, onLeave }: { roomName: string; onLeave: () => v
   }, [roomName]);
 
   const handleLeave = () => {
+    onProcessingNotes(false);
     room.disconnect();
     onLeave();
   };
