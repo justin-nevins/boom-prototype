@@ -1,0 +1,1625 @@
+--- Chunk 0 (55 entries) ---
+[18:00:15] Guest: Hey, Justin. Can you hear me?
+[18:00:18] Guest: No. Nope.
+[18:00:21] Guest: Hello? Now?
+[18:00:23] Guest: I can hear you.
+[18:00:24] Guest: Great.
+[18:00:25] Guest: Perfect. How are you?
+[18:00:28] Guest: Not too bad. How are you doing today?
+[18:00:32] Guest: Good. Good. You think, anyone else is gonna jump on our call?
+[18:00:37] Guest: Oh, I hope so. We had it set for
+[18:00:38] Guest: Yeah.
+[18:00:39] Guest: noon. And I
+[18:00:42] Guest: pretty sure I sent out a invitation
+[18:00:46] Guest: You did. You did. So
+[18:00:46] Guest: So
+[18:00:48] Guest: let me
+[18:00:49] Guest: cool. Well, I guess we'll get
+[18:00:51] Guest: give a couple
+[18:00:53] Guest: a do you have the, agenda meeting minutes pulled up?
+[18:00:55] Guest: By chance? If not, I'll pull
+[18:00:56] Guest: Yeah. I do.
+[18:00:56] Guest: Okay.
+[18:00:58] Guest: Wanna chat about that? Just give me a second.
+[18:01:00] Guest: Yeah. Let me
+[18:01:03] Guest: Is that in resources?
+[18:01:07] Guest: What?
+[18:01:10] Guest: If I go into FI,
+[18:01:11] Guest: and
+[18:01:11] Guest: Oh,
+[18:01:13] Guest: at, I mean,
+[18:01:14] Guest: I've told minutes that I sent last week.
+[18:01:19] Guest: No. No. Not not the meeting minutes. Sorry. But, like, the meeting agenda that
+[18:01:21] Guest: That I sent out.
+[18:01:28] Guest: I saw a small list of things, and I kinda just
+[18:01:30] Guest: adapted it, but I'm happy to
+[18:01:32] Guest: change that.
+[18:01:34] Guest: Yeah. No worries. I'm just,
+[18:01:38] Guest: okay. Maybe this is it.
+[18:01:40] Guest: I might have it.
+[18:01:43] Guest: Working group guy.
+[18:01:45] Guest: I should have had it, pulled up here, but let me
+[18:01:46] Guest: see.
+[18:01:53] Guest: Did you do your
+[18:01:56] Guest: pitch last week, or are you doing it this week?
+[18:01:57] Guest: Doing it this week.
+[18:02:01] Guest: You wanna give it to me, and then I'll do mine or vice
+[18:02:04] Guest: versa? I'll do mine and then you do yours, whatever.
+[18:02:07] Guest: Yeah. We're gonna do though I was gonna have everyone
+[18:02:11] Guest: Yeah.
+[18:02:12] Guest: including myself, do them during the meeting, assuming that we have our other
+[18:02:12] Guest: guests here.
+[18:02:15] Guest: Yeah. Absolutely.
+[18:02:17] Guest: And then
+[18:02:21] Guest: okay.
+[18:02:22] Guest: Let me
+[18:02:23] Guest: get
+
+--- Chunk 1 (119 entries) ---
+[18:02:25] Guest: the notes up here.
+[18:02:42] Guest: Cool.
+[18:02:45] Guest: Weekly agenda template.
+[18:02:48] Guest: Chameleons, agenda three nine. That is today. Okay. Great.
+[18:02:48] Guest: Here we go.
+[18:02:53] Guest: Yeah. What did you wanna
+[18:02:56] Guest: specifically, talk about those
+[18:02:57] Guest: or adjust
+[18:03:00] Guest: So I got an email
+[18:03:02] Guest: yesterday
+[18:03:03] Guest: Mhmm.
+[18:03:07] Guest: I got two two emails. One earlier in the weekend and then one yesterday.
+[18:03:08] Guest: Saying, hey. You're gonna be
+[18:03:10] Guest: pitching Tuesday.
+[18:03:13] Guest: And then I got an email yesterday saying, hey.
+[18:03:16] Guest: Scratch that. You're gonna be pitching Wednesday.
+[18:03:20] Guest: Did you get that email by chance?
+[18:03:23] Guest: I got an email saying I'm going Tuesday,
+[18:03:23] Guest: Done.
+[18:03:28] Guest: and you're probably on Wednesday, obviously, because it's the Feds day.
+[18:03:29] Guest: Yes. Yeah.
+[18:03:30] Guest: Once it is descent.
+[18:03:30] Guest: Which
+[18:03:33] Guest: interestingly, I,
+[18:03:36] Guest: I pivoted to defense.
+[18:03:39] Guest: I,
+[18:03:44] Guest: After, going through this
+[18:03:46] Guest: entire, this week's sprint.
+[18:03:47] Guest: Yeah.
+[18:03:47] Guest: Kind of
+[18:03:48] Guest: like,
+[18:03:50] Guest: helped me narrow in on
+[18:03:55] Guest: Yeah.
+[18:03:55] Guest: what I need to work on and
+[18:03:57] Guest: I guess, help me narrow in on my ideal customer.
+[18:03:58] Guest: Right.
+[18:03:58] Guest: And
+[18:03:59] Guest: see that
+[18:04:03] Guest: the competition in the other areas was
+[18:04:07] Guest: it was a little steep and there is kind of a problem that needs to be
+[18:04:11] Guest: really needs to be solved in defense contractor
+[18:04:12] Guest: for them.
+[18:04:13] Guest: Yeah.
+[18:04:16] Guest: So it it's really helped me kinda narrow in on that.
+[18:04:17] Guest: Yeah.
+[18:04:17] Guest: And
+[18:04:19] Guest: so I've been kinda whirlwind since
+[18:04:22] Guest: Friday just trying to, like,
+[18:04:24] Guest: Yeah.
+[18:04:24] Guest: retool everything to that direction.
+[18:04:31] Guest: I guess, I mean, we're five minutes. Is it five minutes in?
+[18:04:33] Guest: Yeah. We're fine.
+[18:04:36] Guest: We can just we can just start going.
+[18:04:38] Guest: I don't know who the other guest is here.
+[18:04:39] Guest: That's me.
+[18:04:40] Guest: Like,
+[18:04:40] Guest: Oh,
+[18:04:42] Guest: Hey. How you doing?
+[18:04:43] Guest: hey.
+[18:04:45] Guest: Good. Good. It just says guest on your thing. So
+[18:04:47] Guest: Yes.
+[18:04:48] Guest: Because when I whenever I click the link, it doesn't
+[18:04:51] Guest: stop at the log on page. It just goes right into the room.
+[18:04:52] Guest: oh, I gotcha. I gotcha.
+[18:04:56] Guest: That's because we're on ghetto. We're on boom. Sorry.
+[18:04:56] Guest: Yeah.
+[18:04:57] Guest: That's fine.
+[18:05:00] Guest: It it works well. Yeah. I mean, I think it works great.
+[18:05:01] Guest: So
+[18:05:03] Guest: cool.
+[18:05:06] Guest: Alright. Five minutes in, let's
+[18:05:08] Guest: guess we can kick off.
+[18:05:09] Guest: Yeah. Let's do it. Let's do it.
+[18:05:11] Guest: You wanna you wanna start?
+[18:05:15] Guest: So I'll do, like, a I set up the agenda, and we can
+[18:05:17] Guest: try this out and then
+[18:05:17] Guest: take
+[18:05:20] Guest: feedback and adjust it as necessary in the future.
+[18:05:21] Guest: If that works
+[18:05:23] Guest: Yeah. I'm gonna get my timer out.
+[18:05:24] Guest: So
+[18:05:27] Guest: Cool. I got one ready as well. Let's
+[18:05:28] Guest: I guess,
+[18:05:31] Guest: let's start with you, Dylan, with your
+[18:05:34] Guest: one minute, with your win this week.
+[18:05:37] Guest: Alright. I'll do my one minute first.
+[18:05:38] Guest: And so when I just start
+[18:05:40] Guest: talking, you can hit the time.
+[18:05:47] Guest: Hello? My company, David Manufacturing,
+[18:05:51] Guest: the
+[18:05:54] Guest: manufacturing shortages by producing ITAR compliant
+[18:05:59] Guest: parts and, equipment with automated sustainable
+[18:05:59] Guest: manufacturing practices.
+[18:06:04] Guest: Here's my why. Dave in Manufacturing was ignited by my
+[18:06:09] Guest: spirit to tackle massive geopolitical threats
+[18:06:11] Guest: watching both COVID and foreign adversaries expose US vulnerable
+[18:06:13] Guest: vulnerabilities, I thought to myself,
+[18:06:26] Guest: I wanna fix that. And I launched a veteran led, business to rebuild Mid Manufacturing Base. We Plan On Capitalizing On The Explosive Shift To Where Silicon Valley VCs meet department of war start ups with billions of dollars.
+[18:06:31] Guest: Our company is essential for the world because it safeguards America's superpower status,
+[18:06:36] Guest: after year three, we plan to start executing strategic m and a
+[18:06:40] Guest: to secure the supply lines from start to finish and widen our base in a very
+[18:06:45] Guest: fragmented market. In ten to twenty years, we envision being a national leader in manufacturing while
+[18:06:48] Guest: securing the supply lines from start to finish.
+[18:06:51] Guest: Cool. Right on time.
+[18:06:51] Guest: Cool.
+[18:06:56] Guest: I have to say it really fast because it's a lot. You know? So
+[18:06:59] Guest: Have you,
+[18:07:03] Guest: speaking so speed. I mean, I didn't notice that
+[18:07:05] Guest: too much. I don't know about you, Tucker, but
+[18:07:06] Guest: you know, if you
+[18:07:09] Guest: you wanna reduce it
+[18:07:12] Guest: I found that I
+[18:07:15] Guest: I have been going into, like,
+[18:07:17] Guest: AI, obviously, and
+[18:07:18] Guest: take
+[18:07:18] Guest: Yeah.
+[18:07:20] Guest: Yeah.
+[18:07:22] Guest: a page and saying, hey. How can I reduce this? You're taking sentences and saying,
+[18:07:23] Guest: make this shorter.
+
+--- Chunk 2 (121 entries) ---
+[18:07:24] Guest: Yeah.
+[18:07:25] Guest: And using that to kinda, like, tweak
+[18:07:26] Guest: my
+[18:07:28] Guest: thing. So if you're trying to like
+[18:07:29] Guest: Yeah.
+[18:07:30] Guest: give yourself more breathing room, try that.
+[18:07:35] Guest: No. I'm gonna do that actually right now. Thank you. I
+[18:07:40] Guest: you know, I've been using AI heavily too. I use Grock, so I I should have just been doing this.
+[18:07:41] Guest: But,
+[18:07:44] Guest: I I guess I just needed someone to tell me.
+[18:07:44] Guest: So
+[18:07:47] Guest: How does graph work in actual
+[18:07:48] Guest: practice? I've only heard anecdotes
+[18:07:50] Guest: I'm not on x anymore.
+[18:07:54] Guest: I just I don't really I'm not really on social
+[18:07:56] Guest: I'm on social media, but I don't
+[18:08:01] Guest: not posting anything on social media. I use Grok as an AI. I use it as my
+[18:08:04] Guest: my executive assistant, project manager,
+[18:08:09] Guest: idea of mind to bounce things off of.
+[18:08:10] Guest: Mhmm.
+[18:08:11] Guest: I like it. I enjoy it.
+[18:08:13] Guest: I'm a big fan of Tesla, and
+[18:08:14] Guest: Elon, so
+[18:08:16] Guest: whatever you guys saw. I'm sorry.
+[18:08:17] Guest: But
+[18:08:18] Guest: I
+[18:08:19] Guest: I like it.
+[18:08:23] Guest: I don't know if I answered your question, but I just use it.
+[18:08:23] Guest: We do.
+[18:08:24] Guest: Yeah.
+[18:08:27] Guest: My
+[18:08:28] Guest: my win this week
+[18:08:33] Guest: I'll I'll go next, and my win is that
+[18:08:36] Guest: I was able to
+[18:08:38] Guest: go through that sprint,
+[18:08:43] Guest: and I was in three different directions. I was on, business,
+[18:08:45] Guest: and then I was in legal,
+[18:08:48] Guest: and then I added defense. And I
+[18:08:51] Guest: did, the assignment for all three of those.
+[18:08:54] Guest: And after doing the assignment for all three,
+[18:08:59] Guest: defense popped up as this is the biggest problem, this is the biggest
+[18:09:00] Guest: hole in the market,
+[18:09:01] Guest: Mhmm.
+[18:09:04] Guest: and there are other people running to fix
+[18:09:07] Guest: those other issues and there's some big players doing that.
+[18:09:09] Guest: The problem with the
+[18:09:10] Guest: defense market is the
+[18:09:12] Guest: big players
+[18:09:14] Guest: don't care about the little players and the little
+[18:09:15] Guest: smaller
+[18:09:17] Guest: contractors.
+[18:09:19] Guest: So they're being left behind.
+[18:09:21] Guest: So I discovered that,
+[18:09:26] Guest: and that has, like, drawn me toward that problem trying to solve it. So that's
+[18:09:28] Guest: I guess, my biggest win.
+[18:09:32] Guest: Okay. My biggest win
+[18:09:36] Guest: was I had a conversation with David this past weekend.
+[18:09:38] Guest: Last week after I
+[18:09:43] Guest: last Tuesday meeting. And, we had a really good conversation about
+[18:09:43] Guest: business.
+[18:09:45] Guest: And,
+[18:09:47] Guest: you know, they're working on
+[18:09:50] Guest: things to actively get me in front of the right
+[18:09:51] Guest: right people.
+[18:09:53] Guest: Specifically in the defense.
+[18:09:53] Guest: Cohort.
+[18:09:54] Guest: So
+[18:09:57] Guest: that's my big one.
+[18:09:58] Guest: Nice.
+[18:10:03] Guest: So my big win
+[18:10:06] Guest: I don't know how much of a win it is. I met with
+[18:10:10] Guest: a mentor this week, and she basically
+[18:10:12] Guest: told me that I need to shift my audience.
+[18:10:13] Guest: So
+[18:10:14] Guest: for Kaye,
+[18:10:16] Guest: the nonprofit that
+[18:10:17] Guest: they're also
+[18:10:20] Guest: they also want state shift for women veterans.
+[18:10:23] Guest: But the young girls have a summer camp
+[18:10:26] Guest: in July. And so she was like,
+[18:10:29] Guest: shift to the summer camp because it's closer.
+[18:10:32] Guest: And you can prove traction, which is what
+[18:10:35] Guest: investors want to see. And so
+[18:10:36] Guest: I just
+[18:10:38] Guest: you know, similar to you, Justin, I had to
+[18:10:41] Guest: shift all my stuff over. But I was like, well, good thing I haven't
+[18:10:45] Guest: Yeah.
+[18:10:45] Guest: gone too far down this rabbit hole, and then I can shift. And good thing
+[18:10:46] Guest: state ships
+[18:10:51] Guest: the framework holds, so I don't have to change
+[18:10:54] Guest: the whole thing. I just have to adjust the language
+[18:11:00] Guest: and make sure that the MVP is small enough and has enough in
+[18:11:03] Guest: instruction that young girls can use it.
+[18:11:04] Guest: Yeah.
+[18:11:06] Guest: Because there's a lot of assumptions that I could
+[18:11:09] Guest: like, write off when I'm talking about adults that they've already
+[18:11:14] Guest: thought about who they are, they had life experiences, and they
+[18:11:18] Guest: can rule certain things out where the young girl, this this is identity formation
+[18:11:20] Guest: them. So this will be a lot more
+[18:11:23] Guest: heavy instruction and then, like, less exercise.
+[18:11:27] Guest: But it also gives me a runway for the app later.
+[18:11:28] Guest: So
+[18:11:30] Guest: I,
+[18:11:33] Guest: no. I I I
+[18:11:35] Guest: think it's a good runway, like you said.
+[18:11:37] Guest: I think it's a good
+[18:11:40] Guest: Yeah.
+[18:11:41] Guest: test market, beta market. It expands your
+[18:11:43] Guest: niche, which is more
+[18:11:43] Guest: Mhmm.
+[18:11:46] Guest: I guess, could be more profitable. But how do you feel about it? How
+[18:11:50] Guest: because I I feel like there was a twinge that you didn't like her advice.
+[18:11:51] Guest: Like, I'm
+[18:11:55] Guest: No. It it's more it's more of, like,
+[18:11:58] Guest: I knew that at some point I was gonna have to pivot. I just didn't realize I was gonna have to pivot audiences.
+[18:12:00] Guest: That quickly.
+[18:12:05] Guest: But it's not it's not a bad thing because I was gonna have to do this anyway because
+[18:12:08] Guest: like I said, the nonprofit had already asked me to do something for the summer camp.
+[18:12:14] Guest: And so what I wanted to do was, like, nail down the woman veteran and
+[18:12:20] Guest: MVP first and then adjusted for young girls.
+[18:12:20] Guest: But
+
+--- Chunk 3 (119 entries) ---
+[18:12:23] Guest: going the opposite way, I mean, it's not
+[18:12:27] Guest: neither here nor there. It's just a different decision that I had made for myself. So
+[18:12:28] Guest: Yeah.
+[18:12:30] Guest: No. Understandable.
+[18:12:31] Guest: Cool.
+[18:12:35] Guest: Nice.
+[18:12:41] Guest: So follow-up from last week. We got,
+[18:12:41] Guest: ten minutes on that.
+[18:12:48] Guest: So as far as the meetings, the meeting minutes, did everyone
+[18:12:53] Guest: feel like those were accurate? Do I need to
+[18:12:54] Guest: adjust anything on how we
+[18:12:58] Guest: took those meeting minutes, any mistakes
+[18:13:01] Guest: I'm gonna pull them up right now.
+[18:13:06] Guest: I know that I had to go I read them
+[18:13:08] Guest: obviously, before I posted them,
+[18:13:10] Guest: and it had attributed
+[18:13:15] Guest: certain comments to like the wrong person. So I had to go through and kinda
+[18:13:16] Guest: change that. Like, Dylan, you had
+[18:13:19] Guest: so I I remember that this specifically, like,
+[18:13:21] Guest: you had some very specific comments
+[18:13:22] Guest: Right.
+[18:13:25] Guest: were valuable. And then
+[18:13:30] Guest: I think I had said something about them as well
+[18:13:30] Guest: after you, just like agreeing with you.
+[18:13:30] Guest: And it
+[18:13:35] Guest: it attributed my comments as yours. So I had to go through and change that.
+[18:13:36] Guest: Understand.
+[18:13:38] Guest: So I don't know if there's any other things like that that happened.
+[18:13:40] Guest: I'll have to go back and pull them up.
+[18:13:44] Guest: I can't find him at this moment.
+[18:13:50] Guest: Oh, I've read it last week, and it looked okay.
+[18:13:51] Guest: Cool.
+[18:13:55] Guest: Yeah. I think I think it's okay.
+[18:13:56] Guest: What
+[18:13:59] Guest: Would you guys like a chance going forward if I send them out
+[18:14:01] Guest: to just take, like, five minutes and take a look at them?
+[18:14:05] Guest: To make sure anything like that doesn't happen again? I mean, I'm gonna look at them before they go out.
+[18:14:12] Guest: And do my any my edits, and then you guys can also and then when everyone's
+[18:14:12] Guest: done, I'll post them.
+[18:14:13] Guest: Yeah.
+[18:14:13] Guest: Does that
+[18:14:14] Guest: Yes. That'll work.
+[18:14:15] Guest: Yeah. No. That that works.
+[18:14:18] Guest: because they're not always accurate and we're
+[18:14:20] Guest: relying on AI to attribute the different
+[18:14:22] Guest: conversations.
+[18:14:28] Guest: Stat so
+[18:14:33] Guest: was gonna ask Tasha about your TAP program research, but it sounds like that's kinda like
+[18:14:34] Guest: how
+[18:14:35] Guest: Yes.
+[18:14:40] Guest: Yeah. So, basically, like, with the the change in audience, what
+[18:14:43] Guest: I'm going to do
+[18:14:48] Guest: Like, Laketa basically just said, you it doesn't my beta initial beta doesn't
+[18:14:53] Guest: have to be big. It can be, like, five girls. And I was like, oh, that's too easy.
+[18:14:56] Guest: I will get my nieces and my cousins and,
+[18:14:57] Guest: will run them through it. But
+[18:15:02] Guest: I think maybe and I'm traveling this week, and so this is gonna be, like,
+[18:15:02] Guest: a tough
+[18:15:07] Guest: the timeline is shitty because, I need to get
+[18:15:12] Guest: the workbook done enough that I can get it to them and, like, give them an
+[18:15:16] Guest: instruction, but I'm gonna be traveling. And so I just need to figure that out so that I have
+[18:15:21] Guest: at least some initial feedback before we do our
+[18:15:22] Guest: mentor
+[18:15:26] Guest: like, their decision on our idea.
+[18:15:27] Guest: So
+[18:15:30] Guest: Yeah. Which I I still have a question about
+[18:15:34] Guest: the whole mentor three things slash, like, three advisers.
+[18:15:34] Guest: Mhmm.
+[18:15:37] Guest: Right? I asked David about this because I was like, hey.
+[18:15:37] Guest: Like,
+[18:15:40] Guest: I haven't really grabbed any
+[18:15:43] Guest: advisers or mentors that we've met with so far.
+[18:15:45] Guest: Throughout the cohort.
+[18:15:48] Guest: Like, I'm very deep into
+[18:15:50] Guest: defense space.
+[18:15:54] Guest: And so it was like, what are your thoughts? And he he more or less told me, like,
+[18:15:55] Guest: hold off
+[18:15:58] Guest: Mhmm.
+[18:15:59] Guest: until this week because he thinks
+[18:16:03] Guest: after this, like, Tuesday, Wednesday, we're gonna get rid of, like, half our class.
+[18:16:04] Guest: Oh,
+[18:16:07] Guest: Not only that is that we're gonna be
+[18:16:08] Guest: more
+[18:16:13] Guest: Okay.
+[18:16:13] Guest: focused and have a lot more time, like, individually with
+[18:16:14] Guest: like, mentors and
+[18:16:17] Guest: advisers and stuff like that. So,
+[18:16:20] Guest: I besides, like, this
+[18:16:25] Guest: deliverable is due for tomorrow, I have not really
+[18:16:26] Guest: started working forward.
+[18:16:28] Guest: Thoughts?
+[18:16:30] Guest: On that?
+[18:16:34] Guest: Because I know, Justin, you were like, you guys should be look looking forward because
+[18:16:37] Guest: we got these mentor things. I haven't touched that yet.
+[18:16:39] Guest: Because I'm like, I don't know.
+[18:16:40] Guest: You know?
+[18:16:41] Guest: So
+[18:16:42] Guest: I I think I
+[18:16:43] Guest: Yeah. But there's a
+[18:16:44] Guest: the deluxe
+[18:16:44] Guest: go ahead.
+[18:16:44] Guest: one.
+[18:16:49] Guest: Yeah. The deliverables that we have for mentors is really just doing the research on who's coming up. Right?
+[18:16:50] Guest: Right.
+[18:16:50] Guest: So it's not
+[18:16:54] Guest: don't have to, like, actually talk to them. You just gotta go look at their LinkedIn
+[18:16:54] Guest: Right.
+[18:16:55] Guest: and
+[18:16:58] Guest: kind of see if there are people that you would want to
+[18:17:03] Guest: talk to or that have some insight into what
+[18:17:03] Guest: you're doing that could be useful to you,
+[18:17:04] Guest: Yeah.
+[18:17:09] Guest: I I guess I guess for me, I just look at, like, my
+[18:17:13] Guest: you go to, like, the home page dashboard and you, like, scroll down,
+[18:17:17] Guest: like, part of it is there's, like, a space for, like, your
+[18:17:19] Guest: mentors or your advisers. There's, like,
+[18:17:20] Guest: Hello?
+[18:17:20] Guest: half to
+[18:17:22] Guest: advisers here.
+
+--- Chunk 4 (132 entries) ---
+[18:17:24] Guest: So
+[18:17:26] Guest: they just haven't brought anyone on yet.
+[18:17:27] Guest: But
+[18:17:28] Guest: that was it.
+[18:17:30] Guest: I think I agree with what
+[18:17:31] Guest: Tasha is saying. Like, you just
+[18:17:33] Guest: it's probably good to
+[18:17:37] Guest: just set meetings and speak with them because you'll find, like, who you
+[18:17:39] Guest: Yeah.
+[18:17:39] Guest: kinda vibe with. I mean, I
+[18:17:40] Guest: there was
+[18:17:41] Guest: set a meeting with
+[18:17:48] Guest: Yeah.
+[18:17:48] Guest: I I think her name was Lip I think.
+[18:17:50] Guest: And
+[18:17:51] Guest: had a meeting with our
+[18:17:52] Guest: last week
+[18:17:56] Guest: she was a little scattered, like, on her phone.
+[18:17:59] Guest: It didn't really feel like it was
+[18:18:00] Guest: you know,
+[18:18:01] Guest: that
+[18:18:02] Guest: Advantages.
+[18:18:05] Guest: that great. I mean, yeah, she gave me some advice. I valued it.
+[18:18:07] Guest: And then I said another one,
+[18:18:12] Guest: for this week, and she didn't send me the, like, Google invite
+[18:18:13] Guest: link.
+[18:18:16] Guest: There's no way for me to sign up for the meeting.
+[18:18:19] Guest: So I, like, figured out her email address, and I emailed her.
+[18:18:20] Guest: Yeah.
+[18:18:22] Guest: And then she emailed me back. And I was just like, okay. I
+[18:18:23] Guest: I don't
+[18:18:24] Guest: On to the next.
+[18:18:27] Guest: onto the next exactly.
+[18:18:29] Guest: And then
+[18:18:31] Guest: so yeah.
+[18:18:36] Guest: But as far as the I guess the next item here is
+[18:18:40] Guest: mine and Jaymon's Open Cloud deployment experiment.
+[18:18:41] Guest: Yeah.
+[18:18:44] Guest: I, like, pumped the brakes on that.
+[18:18:45] Guest: Because
+[18:18:49] Guest: I up I updated my Open Klaw
+[18:18:52] Guest: and I, like, broke a bunch of things.
+[18:18:54] Guest: And I'm still in, like,
+[18:18:57] Guest: Yeah.
+[18:18:59] Guest: I'm still in development. So I'm, like, experimenting. I'm, like, hey. Let's try to, like,
+[18:19:02] Guest: break it this way, and then it when it breaks, I fix it.
+[18:19:06] Guest: So I did that and everything exploded and it, like, lost its memory and, like,
+[18:19:07] Guest: so I, like,
+[18:19:08] Guest: completely
+[18:19:11] Guest: broke it. I rebuilt it
+[18:19:14] Guest: but I'm, like, I don't know if I wanna, like,
+[18:19:17] Guest: give this to someone yet and have them
+[18:19:23] Guest: be, like, trying to operate it and next thing you know it lost
+[18:19:23] Guest: like, all of their contacts and whatnot and just
+[18:19:24] Guest: Right.
+[18:19:24] Guest: crashed. So
+[18:19:26] Guest: it's like
+[18:19:31] Guest: one of those MVPs I'm embarrassed about, and I'm not ready to, like, give it to someone.
+[18:19:32] Guest: Yeah.
+[18:19:33] Guest: So
+[18:19:36] Guest: Isn't that what they just told us? You gotta be embarrassed by your MVP. You need to get the
+[18:19:37] Guest: feedback.
+[18:19:39] Guest: Etcetera, etcetera, etcetera.
+[18:19:41] Guest: yeah.
+[18:19:44] Guest: Mean, this one works great until it doesn't, but I would feel guilty, like,
+[18:19:48] Guest: giving it to someone in our working group and have them, like, spend time on it and then it breaks. They're like, what
+[18:19:50] Guest: what the hell, Justin? You know?
+[18:19:50] Guest: Right.
+[18:19:55] Guest: That's kinda where I stand on that. And then
+[18:19:58] Guest: Dylan, we were gonna talk about your contract status update.
+[18:20:07] Guest: So I have a couple I'm not sure what
+[18:20:10] Guest: contract status, specifically, but I have a couple, like, written LOIs
+[18:20:11] Guest: Yep.
+[18:20:13] Guest: for, one, securing my manufacturing space,
+[18:20:15] Guest: securing my equipment,
+[18:20:22] Guest: and securing, my first I'm onboarding my first I'm not sure what to call them yet, employee
+[18:20:27] Guest: possible cofounder.
+[18:20:28] Guest: I'm gonna say employee at this
+[18:20:30] Guest: this moment in time.
+[18:20:35] Guest: Yeah. That that's where I'm at. I have, written LOIs,
+[18:20:36] Guest: sent them out,
+[18:20:38] Guest: waiting for them to get signed.
+[18:20:41] Guest: By the equipment company and by the,
+[18:20:45] Guest: manufacturing building that I'm looking to take the leash on.
+[18:20:48] Guest: That's where I'm at. Those are my updates.
+[18:20:51] Guest: So
+[18:20:52] Guest: And then,
+[18:20:53] Guest: just to
+[18:20:56] Guest: touch on, Dylan, what you were saying before I
+[18:20:59] Guest: about the going ahead.
+[18:20:59] Guest: Yeah.
+[18:21:02] Guest: I think I only mentioned the setting customer interview.
+[18:21:04] Guest: Oh,
+[18:21:05] Guest: Because
+[18:21:06] Guest: that
+[18:21:07] Guest: takes time
+[18:21:08] Guest: yeah.
+[18:21:11] Guest: And if you're doing a sprint like a week or two from now,
+[18:21:12] Guest: and it's like,
+[18:21:13] Guest: are your five interviews? You know, like,
+[18:21:16] Guest: okay. I have to start calling people
+[18:21:17] Guest: Yeah.
+[18:21:21] Guest: Yeah.
+[18:21:21] Guest: Like, if you start calling people now, that's the only reason why I mentioned, like, get ahead on the
+[18:21:22] Guest: interviews.
+[18:21:23] Guest: Yeah. No. No. No. That's good.
+[18:21:26] Guest: Okay.
+[18:21:30] Guest: And then we can move on to
+[18:21:35] Guest: unless and does anyone else have anything from, like, last week they wanna follow-up on?
+[18:21:40] Guest: When when are the interviews due, or is this just for that idea pitch?
+[18:21:41] Guest: Like, what?
+[18:21:46] Guest: I am actually not sure. I know they're coming up
+[18:21:48] Guest: You know what? Are you in the validate track, or what track are you in?
+[18:21:50] Guest: I'm invalid.
+[18:21:51] Guest: Whatever the initial via validate.
+[18:21:52] Guest: Okay.
+[18:21:52] Guest: Alright.
+[18:21:54] Guest: Yeah.
+[18:21:55] Guest: What are you, Dylan?
+[18:21:55] Guest: Validate.
+[18:21:57] Guest: Okay. So we're all validate.
+[18:21:58] Guest: Yeah.
+[18:22:00] Guest: I'm not sure where I
+[18:22:03] Guest: Maybe we don't have to do those.
+[18:22:05] Guest: Because I
+[18:22:09] Guest: I looked at a couple different tracks. So maybe I was
+[18:22:10] Guest: I'm just making that up.
+[18:22:11] Guest: I have to double
+[18:22:13] Guest: No. It might be in the
+[18:22:14] Guest: development somewhere, but let me
+[18:22:19] Guest: I have three customer problems.
+[18:22:22] Guest: Three customer archetypes.
+
+--- Chunk 5 (129 entries) ---
+[18:22:28] Guest: The customer problems.
+[18:22:30] Guest: Editor analysis, what
+[18:22:32] Guest: failed startups,
+[18:22:35] Guest: and then the revenue models.
+[18:22:37] Guest: And so that's that's for this sprint.
+[18:22:41] Guest: Let me look at the next sprint. I haven't looked at that yet.
+[18:22:49] Guest: Yeah. For for next week, I for revenue
+[18:22:51] Guest: and business models,
+[18:22:53] Guest: Yeah.
+[18:22:58] Guest: The the Zoom cost of revenue and business models are for
+[18:23:03] Guest: tomorrow, but deliverables aren't due until the seventeenth.
+[18:23:06] Guest: Oh, man.
+[18:23:08] Guest: And then it won't let me go forward.
+[18:23:09] Guest: Past that.
+[18:23:10] Guest: So
+[18:23:10] Guest: Right.
+[18:23:13] Guest: unless I'm in the home screen.
+[18:23:19] Guest: I'll have to I'll have to circle back on that, and I'll provide you guys some more information.
+[18:23:21] Guest: Okay. Great.
+[18:23:22] Guest: I
+[18:23:23] Guest: Yeah. Alright. So if you guys go to
+[18:23:24] Guest: home screen,
+[18:23:26] Guest: I don't know if it was, like, from talking to a mentor or something, but I I'll double check.
+[18:23:27] Guest: Okay.
+[18:23:31] Guest: If you guys were to go to the home screen,
+[18:23:35] Guest: like, if you go into deliverables, the last thing is revenue and business models.
+[18:23:35] Guest: Mhmm.
+[18:23:38] Guest: And then anything past that right now is, like, locked out.
+[18:23:39] Guest: Right.
+[18:23:42] Guest: Right? So I think that goes to David's conversation of, like,
+[18:23:44] Guest: we're gonna lose half the class.
+[18:23:45] Guest: Mhmm.
+[18:23:49] Guest: And and slash they may not have,
+[18:23:51] Guest: unlocked it yet. So
+[18:23:52] Guest: Well,
+[18:23:53] Guest: I think
+[18:23:54] Guest: we're
+[18:23:54] Guest: block.
+[18:23:55] Guest: yeah,
+[18:23:56] Guest: Yeah.
+[18:23:59] Guest: I think we're good, but we've been I think we've been doing a great job. Everyone's done their deliverables.
+[18:24:00] Guest: Yeah.
+[18:24:00] Guest: That's the huge thing.
+[18:24:04] Guest: If you're missing your deliverables, they're gonna cut you.
+[18:24:05] Guest: Yeah. Which I,
+[18:24:06] Guest: like,
+[18:24:11] Guest: I completed like, last week, I got an email on Tuesday. It was like, hey. You
+[18:24:16] Guest: fucked up a bunch of stuff from the first week. And so I went into my whatever. It was like,
+[18:24:20] Guest: it didn't say missing. It just said incomplete. So they didn't like
+[18:24:21] Guest: what I did.
+[18:24:23] Guest: Gotcha.
+[18:24:26] Guest: So I had to go back and change it. So fun fact, if they don't like what you did, they will tell you to go back and
+[18:24:28] Guest: So
+[18:24:30] Guest: Okay. Yeah. They did mention that on the call last week.
+[18:24:31] Guest: yep.
+[18:24:35] Guest: Did you you feel like you were able to fix them to
+[18:24:37] Guest: make them better? Like, what was the
+[18:24:39] Guest: was the they were, like, calling up
+[18:24:40] Guest: Yeah. My biggest issue is I read the question.
+[18:24:43] Guest: I read one of the question wrong. I I did a question
+[18:24:48] Guest: like, it was, like, vision statement and then your why, and I mixed
+[18:24:49] Guest: up the two and
+[18:24:52] Guest: like, did something backwards. So they're like, fix this.
+[18:24:53] Guest: But
+[18:24:54] Guest: I was like, oh,
+[18:24:54] Guest: nice.
+[18:24:56] Guest: So
+[18:24:58] Guest: yeah.
+[18:25:00] Guest: Yeah. I just need to
+[18:25:04] Guest: I think, practice my hot seat. I'm not briefing tonight,
+[18:25:04] Guest: so
+[18:25:07] Guest: next week when we meet, I'll be looking to
+[18:25:08] Guest: practice my
+[18:25:09] Guest: my pitch.
+[18:25:12] Guest: Yeah. Justin, you wanna do your your pitch right now? I I
+[18:25:14] Guest: did my one minute. So you want me to
+[18:25:15] Guest: time you?
+[18:25:19] Guest: Yeah. We can we can jump to that. Let me
+[18:25:21] Guest: pull up some notes here.
+[18:25:38] Guest: And then can you send the notes to Jayman? I know he's in a tough spot.
+[18:25:41] Guest: We make sure he is tracking everything we're tracking.
+[18:25:43] Guest: Sure.
+[18:25:44] Guest: Are we
+[18:25:47] Guest: Yes. I will make sure everyone gets everyone gets the notes.
+[18:25:49] Guest: are we getting an additional
+[18:25:52] Guest: cohort member in our little team?
+[18:25:55] Guest: I think so. That's what
+[18:25:56] Guest: Daniel said this week.
+[18:25:58] Guest: The shake up you're talking about,
+[18:25:58] Guest: Yeah.
+[18:26:00] Guest: apparently, some of the groups are
+[18:26:02] Guest: Trash.
+[18:26:02] Guest: not
+[18:26:06] Guest: like, people don't even talk to each other. They even set meetings. There's, like,
+[18:26:07] Guest: Come again.
+[18:26:08] Guest: someone, like, reached out to, like,
+[18:26:09] Guest: I
+[18:26:11] Guest: none of my group is talking to me.
+[18:26:12] Guest: Yeah.
+[18:26:15] Guest: So I think some people are, like, just bailed on the program.
+[18:26:17] Guest: Yeah. Which is understandable.
+[18:26:18] Guest: You know what I mean?
+[18:26:21] Guest: Yeah. But if you're gonna bail, let people know. That'd be great.
+[18:26:22] Guest: Yeah.
+[18:26:24] Guest: Yeah.
+[18:26:25] Guest: Exactly.
+[18:26:28] Guest: So let's see if this is the right
+[18:26:30] Guest: one.
+[18:26:34] Guest: I was working on this within the last, like, twenty minutes. So
+[18:26:36] Guest: here we go.
+[18:26:38] Guest: Are we timing? You got it.
+[18:26:39] Guest: Yeah. I got I got the timer.
+[18:26:41] Guest: Okay.
+[18:26:45] Guest: My name is Justin Nevins, and I'm the founder of OpsDoctor.
+[18:26:48] Guest: Small defense contractors are about to lose contracts.
+[18:26:51] Guest: CMMC regulations are here.
+[18:26:56] Guest: And 30 to 75 person companies with lean IT staff have no way to keep up.
+[18:26:59] Guest: Right now, someone at every one of these companies
+[18:27:00] Guest: is spending half their week
+[18:27:03] Guest: on compliance paperwork, CY tracking,
+[18:27:04] Guest: fighting cost.
+[18:27:07] Guest: OpsDoctor solves this.
+[18:27:08] Guest: It sits inside teams
+[18:27:10] Guest: connects to what they already use,
+[18:27:12] Guest: runs in a compliant cloud
+[18:27:13] Guest: out of the box.
+[18:27:16] Guest: I ring Logistix Convoys at
+[18:27:19] Guest: in Afghanistan and spent twelve years in the military.
+[18:27:22] Guest: After that, I led a billion dollar bank through regulatory
+
+--- Chunk 6 (123 entries) ---
+[18:27:24] Guest: regulatory overhaul
+[18:27:26] Guest: and built the systems that kept us compliant.
+[18:27:29] Guest: Same problem, different industry.
+[18:27:31] Guest: I work with AI agents every single day.
+[18:27:34] Guest: The failures, the edge cases, the fixes,
+[18:27:37] Guest: they're all built into Ops Doctor.
+[18:27:41] Guest: I'm looking for mentors in go to market strategy for regulated industries.
+[18:27:46] Guest: Fifty nine fifty on the nose.
+[18:27:49] Guest: Gotta clean up I gotta
+[18:27:50] Guest: Yeah.
+[18:27:50] Guest: memorize it a little bit more. Like I said, I just
+[18:27:52] Guest: I just,
+[18:27:54] Guest: finished typing it out.
+[18:27:56] Guest: Like, an hour ago.
+[18:27:56] Guest: Yeah.
+[18:27:58] Guest: No. That that that's
+[18:27:58] Guest: Do you wanna run through it again tomorrow?
+[18:28:03] Guest: Do you guys wanna run through it again tomorrow before
+[18:28:04] Guest: before class?
+[18:28:05] Guest: Sure. That'll
+[18:28:05] Guest: Yeah. We can.
+[18:28:08] Guest: Absolutely. I I would like to because, like,
+[18:28:13] Guest: I haven't memorized it completely. I I know what I'm
+[18:28:13] Guest: saying. I know what I wanna say.
+[18:28:14] Guest: Mhmm.
+[18:28:17] Guest: But, like, the exact pitch word for word,
+[18:28:19] Guest: you know, because, like, one of them, Mike,
+[18:28:20] Guest: some
+[18:28:25] Guest: the veteran fund, he was like, have a conversation with us. You know? You just
+[18:28:26] Guest: like you're talking to us.
+[18:28:29] Guest: Which is good. I can do that.
+[18:28:30] Guest: But I'm gonna go over a minute
+[18:28:31] Guest: You know?
+[18:28:32] Guest: So
+[18:28:34] Guest: yep.
+[18:28:34] Guest: Yeah.
+[18:28:34] Guest: I looked at a
+[18:28:37] Guest: I looked at a company today as part of my
+[18:28:38] Guest: research
+[18:28:39] Guest: and I'm gonna
+[18:28:43] Guest: post it in the chat. I think it's called
+[18:28:47] Guest: Spark or something.
+[18:28:49] Guest: Might be spark.
+[18:28:59] Guest: Nope. Not Spark.
+[18:29:02] Guest: Let me just look at my notes here.
+[18:29:03] Guest: Pulling it up because
+[18:29:06] Guest: they have a I'll send it out. We don't need to go over right now.
+[18:29:07] Guest: But
+[18:29:09] Guest: they had a
+[18:29:13] Guest: have a video on their site and their start up. They just got series a funding.
+[18:29:14] Guest: Defense contractor.
+[18:29:15] Guest: And
+[18:29:20] Guest: his video is really well done. It's and it's exactly what you're talking about, Dylan.
+[18:29:21] Guest: Like more of a
+[18:29:23] Guest: like an interview conversation.
+[18:29:25] Guest: And he, like, nails it.
+[18:29:26] Guest: I'm gonna send that out to everyone
+[18:29:29] Guest: after the meeting.
+[18:29:30] Guest: But
+[18:29:33] Guest: yeah, I agree with the whole conversation thing.
+[18:29:38] Guest: Any other feedback for me on this? I mean, this is a
+[18:29:40] Guest: this is a pivot from
+[18:29:41] Guest: from my company
+[18:29:45] Guest: or, like, my original target
+[18:29:47] Guest: anything that sounds off
+[18:29:52] Guest: No. Like, this isn't
+[18:29:54] Guest: the tell me more is there because
+[18:29:57] Guest: you know, I'm like, oh, I would like to know how
+[18:30:01] Guest: you're using AI to keep people compliant
+[18:30:06] Guest: especially something like OpenClaw that seems like you need to give it
+[18:30:10] Guest: all of your access. Okay. Well, then how does that help you get more compliant? Like, it seems
+[18:30:15] Guest: like a contradiction, but you saying
+[18:30:19] Guest: the experience that you have and keeping people compliant and the experience you have with AI and maybe
+[18:30:21] Guest: go, oh, I'd be curious to see how he's actually gonna do this.
+[18:30:23] Guest: Okay.
+[18:30:24] Guest: And that's the goal. Right?
+[18:30:25] Guest: Mhmm.
+[18:30:28] Guest: Anything else?
+[18:30:31] Guest: Obviously, delivery, but anything else
+[18:30:32] Guest: other than that.
+[18:30:37] Guest: Did you clearly state
+[18:30:40] Guest: state how this will make money? Because you're saying these are
+[18:30:41] Guest: small companies
+[18:30:43] Guest: How what does their budget look like to
+[18:30:44] Guest: to do this?
+[18:30:47] Guest: So
+[18:30:48] Guest: I'm gonna
+[18:30:53] Guest: so as far as that kinda gets into, like, the slides that we have to
+[18:30:53] Guest: have done.
+[18:30:55] Guest: I am
+[18:30:59] Guest: expecting I'm gonna deploy this on GovCloud.
+[18:31:05] Guest: And use their Bedrock, AI service, which is
+[18:31:08] Guest: Fed High certified.
+[18:31:11] Guest: FedRAMP high certified.
+[18:31:13] Guest: So
+[18:31:15] Guest: it's already certified out of the box.
+[18:31:17] Guest: To operate
+[18:31:19] Guest: and
+[18:31:21] Guest: I'm gonna charge
+[18:31:24] Guest: thousand dollars a month and
+[18:31:27] Guest: it's going to save them
+[18:31:32] Guest: I mean, I I guess I have to work on my actual explanation here, but
+[18:31:35] Guest: gonna save people a ton of time, ton of admin work,
+[18:31:39] Guest: and it's gonna be like having an ops employee It's gonna 10 x,
+[18:31:40] Guest: the existing
+[18:31:42] Guest: admin person.
+[18:31:48] Guest: Yep.
+[18:31:48] Guest: Got it. I I just had that feedback because that's the feedback they gave me. I was like,
+[18:31:52] Guest: yeah. Even though I was like, why do you think just because
+[18:31:57] Guest: it's helping people that it's not gonna make money? But I was like, alright.
+[18:31:59] Guest: But I got that question twice, and so I was like, I clearly have to answer this question.
+[18:32:04] Guest: And they want you to have how you're gonna
+[18:32:04] Guest: make money in your one minute.
+[18:32:07] Guest: That's what they asked. That's what they gave me. They were like, okay.
+[18:32:09] Guest: Great.
+[18:32:11] Guest: But how how does this make an investor money?
+[18:32:14] Guest: Yeah.
+[18:32:14] Guest: I think because they saw, like, the nonprofit
+[18:32:16] Guest: thing.
+[18:32:16] Guest: Mhmm.
+[18:32:20] Guest: And I think they were like, well, how do we fit into this was their question.
+[18:32:21] Guest: Mhmm.
+[18:32:22] Guest: You know, which I think for me,
+
+--- Chunk 7 (104 entries) ---
+[18:32:26] Guest: I see your program a part of, and I might have said this before of, the
+[18:32:28] Guest: Mhmm.
+[18:32:36] Guest: Mhmm.
+[18:32:41] Guest: No. No. That's that those are all
+[18:32:45] Guest: those are all ways that I can make money. Like, I I
+[18:32:47] Guest: TAP. Right? You could be contracted through TAP, Yellow Ribbon, whoever. That's how you're gonna make money. So I could bring it up. Right? You can tell me to shut up and you know, but
+[18:32:50] Guest: I don't know. Like, I feel like, what I'm
+[18:32:53] Guest: practicing is how do I pitch this so that I'm clear about what I'm offering,
+[18:32:54] Guest: and
+[18:32:59] Guest: why I think it's valuable. But the part of, like, understanding
+[18:33:01] Guest: Yeah.
+[18:33:01] Guest: the economics of it is really what I need to get stronger in because
+[18:33:05] Guest: Yeah.
+[18:33:06] Guest: like, the whole point is that you're asking people for money. So I have to prove
+[18:33:11] Guest: not just say this is a good idea, but this is a good idea that people are actually wanna pay for.
+[18:33:15] Guest: And so, like, that's part of the reason why she told me to pivot
+[18:33:18] Guest: was because I already have a potential customer who I need to
+[18:33:23] Guest: do a formal arrangement on so that I can show that there's actual attraction
+[18:33:23] Guest: and that there
+[18:33:27] Guest: are legit even though they're a nonprofit, they're legitimately gonna pay for the product.
+[18:33:30] Guest: Yeah.
+[18:33:34] Guest: Yeah. Right.
+[18:33:37] Guest: And that's
+[18:33:38] Guest: and that's valid.
+[18:33:47] Guest: I I think, their thing is probably like, hey. We're a VC. Business accelerator. Like, how do we you know what I mean? You know? Are there and maybe you could pivot and say, you know, I'm going after angel investors or some bullshit. I don't wanna give up equity.
+[18:33:49] Guest: Something. I don't know. Or if he wants
+[18:33:51] Guest: But that that'll probably end up, like, being where I am because the
+[18:33:53] Guest: I we haven't got to the the point
+[18:33:58] Guest: Yeah.
+[18:33:58] Guest: I think he sent out a worksheet, and I probably should look at it, like the the cap table and
+[18:34:02] Guest: all of your unit the unit economics part of it, I need to get deeper into so that I can
+[18:34:07] Guest: talk more to that so that I'll put that on my to do list for this week.
+[18:34:10] Guest: Is to really, like, understand the unit economics so I can clearly
+[18:34:13] Guest: understand how,
+[18:34:18] Guest: how I would scale this to either be VC or say
+[18:34:22] Guest: clearly this is not gonna make VC type money. So let's look at angel investors and
+[18:34:24] Guest: help me get to the point where I can do that.
+[18:34:25] Guest: Right.
+[18:34:30] Guest: But yeah. Like, I I can't keep relying on this is a good idea. Like, the the
+[18:34:32] Guest: money, the numbers have to actually make sense.
+[18:34:34] Guest: Yeah.
+[18:34:42] Guest: Dylan, from a
+[18:34:44] Guest: person who is
+[18:34:45] Guest: review
+[18:34:48] Guest: is obviously deep in defense contracting, that's the
+[18:34:50] Guest: basis of your company.
+[18:34:55] Guest: What are your first thoughts when you hear about
+[18:34:56] Guest: and
+[18:35:01] Guest: a compliant AI that goes into your system and and helps you? Like, what are your
+[18:35:04] Guest: do you feel like hell no or do you feel like I need that?
+[18:35:05] Guest: So
+[18:35:05] Guest: Like, what are your or in between?
+[18:35:05] Guest: my
+[18:35:07] Guest: no. I I
+[18:35:09] Guest: absolutely need it, and I'm building out
+[18:35:15] Guest: And what I'm seeking is a chief technology officer who has experience in AI automation
+[18:35:17] Guest: software engineering,
+[18:35:18] Guest: background.
+[18:35:21] Guest: Right? Because my company specifically
+[18:35:25] Guest: is building AI automated factories to produce
+[18:35:27] Guest: ITAR compliant parts, equipment, whatever.
+[18:35:28] Guest: For
+[18:35:31] Guest: defense, aerospace, space, medical,
+[18:35:33] Guest: energy, you name it. Right?
+[18:35:39] Guest: We're gonna be building transformers. We'll be building housings for
+[18:35:41] Guest: you know, or hubs for,
+[18:35:45] Guest: one five five rounds, whatever. You name it, we'll build it.
+[18:35:46] Guest: But
+[18:35:47] Guest: I
+[18:35:51] Guest: the factory floor, if you're thinking about my factory floor,
+[18:35:52] Guest: I have
+[18:35:57] Guest: five, 10, 15, 20 pieces of equipment. I can go into my workflow, and I guess
+[18:35:58] Guest: top, on my laptop, and
+[18:36:00] Guest: pull up my AI
+[18:36:03] Guest: that is attached to all of my
+[18:36:05] Guest: automated machines because that's what I'm
+[18:36:08] Guest: buying is, automated machines. And I'm like, okay.
+[18:36:13] Guest: We have 10,000 pieces of x, y, and z order,
+[18:36:15] Guest: 12,000 of a, b, and c.
+[18:36:20] Guest: And so on and so forth. Here are our priority dates. Here's our
+[18:36:21] Guest: inventory.
+[18:36:24] Guest: Go ahead and start executing these orders
+[18:36:25] Guest: and start
+[18:36:30] Guest: machining these orders. Right? Because it's gonna be three d printing,
+[18:36:32] Guest: and AI automated, CNC machines
+[18:36:33] Guest: which
+[18:36:38] Guest: I have the SKUs. Right? And so when I tell it I have a thousand pieces of these,
+[18:36:40] Guest: here's my inventory. Grab the inventory.
+[18:36:41] Guest: It in the machine,
+[18:36:45] Guest: machine the part. So all of that is gonna be, like,
+[18:36:46] Guest: using an AI
+[18:36:49] Guest: workflow.
+[18:36:50] Guest: So I'm
+[18:36:52] Guest: and there's two companies right now that work
+[18:36:57] Guest: with my machine company to build out that platform.
+[18:36:59] Guest: One of them is
+[18:37:04] Guest: wow. I'm freaking the name. One of them is a German company, and the other one is,
+[18:37:07] Guest: SignIn.
+[18:37:09] Guest: So
+[18:37:14] Guest: yes. I am actively already seeking that and building that out.
+[18:37:16] Guest: Look at
+[18:37:18] Guest: look into
+[18:37:21] Guest: go on LinkedIn and look at people who work at LEGO.
+[18:37:23] Guest: In the LEGO warehouses.
+
+--- Chunk 8 (112 entries) ---
+[18:37:25] Guest: Okay.
+[18:37:30] Guest: Because their warehouses are highly automated,
+[18:37:31] Guest: Right.
+[18:37:35] Guest: mostly robotic, not I don't know. I don't see that they
+[18:37:37] Guest: pivoted to AI a bunch.
+[18:37:41] Guest: But I know that you will find people who have experience with automated warehouses.
+[18:37:44] Guest: Cool.
+[18:37:45] Guest: And they have
+[18:37:48] Guest: recently opened up a new warehouse.
+[18:37:53] Guest: On the East Coast, I think. So you might be able to find some people that
+[18:37:55] Guest: might wanna come over.
+[18:37:57] Guest: Cool.
+[18:37:58] Guest: Cool. Cool.
+[18:38:02] Guest: Dylan, are you looking for, like, when you're talking when you're cert looking
+[18:38:04] Guest: for AI companies,
+[18:38:07] Guest: you obviously are looking for someone who is compliant.
+[18:38:09] Guest: But you
+[18:38:13] Guest: like, do you have a specific model that you're targeting? Because I
+[18:38:14] Guest: know, obviously, you can't use
+[18:38:16] Guest: Claude anymore.
+[18:38:17] Guest: Right.
+[18:38:18] Guest: And then
+[18:38:22] Guest: OpenAI is the other option as long as you're going through
+[18:38:24] Guest: Yeah.
+[18:38:24] Guest: GovCloud or some other you know, I don't know if there's another
+[18:38:26] Guest: service, but you have to go through
+[18:38:28] Guest: some sort of cloud or you need on prem
+[18:38:29] Guest: Yeah.
+[18:38:30] Guest: to operate your own model.
+[18:38:32] Guest: You know, I I haven't looked
+[18:38:37] Guest: too deeply into, like, a third party AI. The AI I'm
+[18:38:42] Guest: looking into and working with is not in the traditional sense of
+[18:38:46] Guest: Claude, OpenAI, Grok, whatever.
+[18:38:48] Guest: The AI I'm working
+[18:38:49] Guest: with is, like,
+[18:38:51] Guest: workflow automation
+[18:38:52] Guest: audit
+[18:38:55] Guest: artificial intelligence, where it's like a smart system
+[18:38:58] Guest: that can execute
+[18:39:02] Guest: processes and procedures. However,
+[18:39:04] Guest: I do want
+[18:39:04] Guest: like,
+[18:39:07] Guest: my factory is gonna be a lights out factory. So when I set
+[18:39:10] Guest: parts and parameters at 9AM,
+[18:39:10] Guest: I
+[18:39:14] Guest: everything's still gonna be running at 9PM when I left at five.
+[18:39:17] Guest: Right? And so there's gonna be a lot of tracking
+[18:39:22] Guest: a lot of smart systems diagnostics that are gonna give me, like, constant feedback.
+[18:39:25] Guest: Or look alerts on the phone is what I'm looking for
+[18:39:26] Guest: computer, whatever.
+[18:39:30] Guest: When something malfunctions, something's complete.
+[18:39:33] Guest: To answer your question, no. I have not looked at third party
+[18:39:38] Guest: stuff. I've looked at Simons, and there's a I'm gonna
+[18:39:45] Guest: butcher the name. It's a German company that partners with Hermel machines, to do this AI automation.
+[18:39:47] Guest: So
+[18:39:50] Guest: if that answers your question.
+[18:39:53] Guest: Yeah. No. It does. I mean, so you've
+[18:39:53] Guest: you've been looking at it
+[18:39:56] Guest: operationally and
+[18:39:56] Guest: Yeah.
+[18:39:57] Guest: you have
+[18:40:00] Guest: yeah. To take off the operational burden
+[18:40:01] Guest: Yeah.
+[18:40:04] Guest: which makes sense.
+[18:40:05] Guest: Mean, that
+[18:40:05] Guest: Yeah.
+[18:40:07] Guest: building your entire company around that
+[18:40:08] Guest: Mhmm.
+[18:40:09] Guest: workflow.
+[18:40:10] Guest: Yeah.
+[18:40:12] Guest: But for logistically, no. I have not looked into
+[18:40:15] Guest: n I AI platform.
+[18:40:17] Guest: I think
+[18:40:19] Guest: I have
+[18:40:20] Guest: I'm gonna show you his name.
+[18:40:22] Guest: His name is Michael.
+[18:40:24] Guest: But we're coming up with a
+[18:40:27] Guest: a system for
+[18:40:29] Guest: lead generation
+[18:40:34] Guest: contracts,
+[18:40:37] Guest: potential to get LOIs, customers, you name it.
+[18:40:38] Guest: And that we're using gonna be using a smart
+[18:40:41] Guest: smart system that he's deploying.
+[18:40:41] Guest: So
+[18:40:46] Guest: but, yeah, now I'll send you guys his information too.
+[18:40:51] Guest: I met him in FI boot camp or not boot camp, networking event here in Chicago.
+[18:41:00] Guest: Sweet.
+[18:41:07] Guest: I guess what,
+[18:41:12] Guest: what else does does everyone have? Anything
+[18:41:13] Guest: they wanna bring up or chat about?
+[18:41:17] Guest: I wanna know your guys'
+[18:41:20] Guest: so when I plan anything,
+[18:41:22] Guest: right, I I think about big picture first and
+[18:41:27] Guest: you guys know this military backwards planning. But, big picture first,
+[18:41:29] Guest: and plan backwards.
+[18:41:31] Guest: So what's your big picture?
+[18:41:34] Guest: When do you guys want your launch date? When do you guys wanna be profitable?
+[18:41:37] Guest: And that type of stuff. When do you want your first revenue?
+[18:41:38] Guest: And, like,
+[18:41:39] Guest: what are we doing
+[18:41:44] Guest: to keep you guys accountable, to keep each other accountable? What are we doing
+[18:41:48] Guest: to hit those steps, hit those markers? So for me, for instance,
+[18:41:49] Guest: I want
+[18:41:51] Guest: products going out the door in July.
+[18:41:55] Guest: Right? So I moved into my building, and
+[18:41:56] Guest: May slash June,
+[18:41:59] Guest: that means I'm going to be fundraising
+[18:42:02] Guest: you know, the March April.
+[18:42:06] Guest: Shit like that. So what does that look like for for you guys?
+[18:42:11] Guest: For for me,
+[18:42:19] Guest: I'm bootstrapping with 75,000 and I expect to have a I expect to be profitable
+[18:42:21] Guest: after seven customers.
+
+--- Chunk 9 (100 entries) ---
+[18:42:24] Guest: And I believe that
+[18:42:27] Guest: I can I can be profitable,
+[18:42:28] Guest: with
+[18:42:31] Guest: by the end of or I can break even by the end of the year?
+[18:42:34] Guest: Is is my goal.
+[18:42:37] Guest: So I think with a
+[18:42:40] Guest: say, like, ninety to a hundred and twenty day sales cycle,
+[18:42:44] Guest: I I think that the seven customers is achievable.
+[18:42:48] Guest: Yeah. No. I I think that's
+[18:42:50] Guest: I think that's solid. I think that's very achievable.
+[18:42:52] Guest: It's great.
+[18:42:57] Guest: So for me,
+[18:42:58] Guest: I before the end of the month, I need to be
+[18:43:00] Guest: running my beta
+[18:43:05] Guest: So by mid April, I should have results
+[18:43:12] Guest: and be ready to finalize, my first workbook that goes July 5.
+[18:43:15] Guest: For the first camp.
+[18:43:18] Guest: If I get my LOA
+[18:43:24] Guest: done mid April so after I get the feedback and I have
+[18:43:26] Guest: I know where I'm going, I can work with
+[18:43:29] Guest: one potential customer to get
+[18:43:31] Guest: an agreement with
+[18:43:33] Guest: that nonprofit
+[18:43:34] Guest: and then
+[18:43:37] Guest: see if I can work with the other
+[18:43:41] Guest: nonprofits who are at the camp. So then
+[18:43:44] Guest: that's a minimum of three customers in July.
+[18:43:49] Guest: And then if that's good, then they might refer me
+[18:43:50] Guest: the whole camp, and then that will open up
+[18:43:53] Guest: the audience a lot.
+[18:43:55] Guest: But I'm not gonna rely on that. So
+[18:43:57] Guest: one to three,
+[18:44:00] Guest: solid customers in July,
+[18:44:02] Guest: and then the women veteran version
+[18:44:05] Guest: goes out in
+[18:44:06] Guest: October.
+[18:44:10] Guest: And that'll be at the same camp but just for women veterans. And so
+[18:44:11] Guest: I'll have another shot
+[18:44:13] Guest: to brief that camp.
+[18:44:15] Guest: And so
+[18:44:19] Guest: to me, those are, like, okay. Betas in two separate audiences.
+[18:44:23] Guest: Initial proof of concept. And then next year, I'm looking
+[18:44:25] Guest: to be
+[18:44:28] Guest: like, for sure profitable by next summer.
+[18:44:33] Guest: I like that you're focusing on the same
+[18:44:34] Guest: camp.
+[18:44:35] Guest: And hitting
+[18:44:36] Guest: Yeah.
+[18:44:38] Guest: twice. That I feel like that's a efficient use of time.
+[18:44:39] Guest: Yeah.
+[18:44:40] Guest: I agree.
+[18:44:43] Guest: Cool.
+[18:44:49] Guest: Dylan, what is one one other question about your business
+[18:44:52] Guest: I'm suddenly, like, obviously super interested in it now that I've switched
+[18:44:53] Guest: to,
+[18:44:55] Guest: Yep.
+[18:44:55] Guest: defense contracting and
+[18:44:57] Guest: I'm trying to figure out what I don't know.
+[18:44:58] Guest: Right.
+[18:45:04] Guest: So with CMMC regulations,
+[18:45:07] Guest: and ITAR, how long do you feel like it's going to take you
+[18:45:10] Guest: to be compliant and how
+[18:45:12] Guest: much do you feel like you're gonna spend on that?
+[18:45:18] Guest: Compliance is expensive. IHR compliance is expensive.
+[18:45:22] Guest: So it's it's more like the process
+[18:45:27] Guest: process and procedures that are gonna be our biggest headaches.
+[18:45:28] Guest: Because I'm purchasing the
+[18:45:32] Guest: machines that already hit the scalability
+[18:45:33] Guest: and the,
+[18:45:38] Guest: what's the word I wanna use?
+[18:45:40] Guest: Not only the scale of
+[18:45:45] Guest: the precision, hit the precision marker. So
+[18:45:46] Guest: the machines I'm buying from day one I
+[18:45:48] Guest: hit the scalability,
+[18:45:54] Guest: mark and the precision mark from day one.
+[18:45:58] Guest: So my biggest thing, for being iTAR compliant and
+[18:46:01] Guest: going down the Blue manufacturing program, which is the DIU
+[18:46:06] Guest: program to get it to defense manufacturing.
+[18:46:10] Guest: It's all the back end headache stuff. So,
+[18:46:15] Guest: I have to be all my legal has to be airtight
+[18:46:17] Guest: I can have no
+[18:46:18] Guest: software
+[18:46:20] Guest: that's gonna be
+[18:46:25] Guest: open to adversaries. So cyber security is a big thing.
+[18:46:30] Guest: Physical security, I have to have, like, a security guard a fence,
+[18:46:34] Guest: a barbed wire fence, locked down facility.
+[18:46:36] Guest: A clean facility,
+[18:46:41] Guest: so those those are gonna be the things that are gonna be my headaches
+[18:46:43] Guest: more or less,
+[18:46:45] Guest: how long
+[18:46:51] Guest: like I said, I want parts going out in July to
+[18:46:53] Guest: defense manufacturing.
+[18:46:57] Guest: To to primes. Will that happen?
+[18:47:03] Guest: Maybe not. It might be closer to six months. Right? But you should put the stars. We might hit something.
+[18:47:07] Guest: So, ideally, probably
+[18:47:10] Guest: if we're in July,
+[18:47:12] Guest: parts are going out the door,
+[18:47:15] Guest: I wanna be ITAR compliant by the end of the year.
+[18:47:19] Guest: And cost wise, we're probably looking
+[18:47:23] Guest: half $1,000,000 to become ITAR compliant.
+
+--- Chunk 10 (116 entries) ---
+[18:47:25] Guest: All the things.
+[18:47:27] Guest: So
+[18:47:30] Guest: Are you guys
+[18:47:32] Guest: planning on being CMC level two?
+[18:47:35] Guest: And do you have and do you have an auditor lined up
+[18:47:42] Guest: I do plan on being level two. Yes. I do not have an auditor
+[18:47:47] Guest: yet. And then there's also
+[18:47:50] Guest: we have to send all of our parts and pieces
+[18:47:51] Guest: equipment, anything iTalk compliant to a
+[18:48:00] Guest: yes, another auditor. That's what I'm gonna call them. The
+[18:48:04] Guest: a test facility. So any parts we make dry tar, we have to send them to a test facility.
+[18:48:06] Guest: To pretty much get,
+[18:48:11] Guest: dye dye tested to make sure there's no cracks, no
+[18:48:15] Guest: no, hairline fractures in the equipment.
+[18:48:16] Guest: So no
+[18:48:19] Guest: don't have an auditor lined up.
+[18:48:26] Guest: Yes. We do plan on being level two and, 3AM looking for a test facility.
+[18:48:31] Guest: And that's gonna be one of our biggest headaches slash hurdles, and eventually, we will
+[18:48:33] Guest: bring that in house.
+[18:48:34] Guest: It just cost money.
+[18:48:41] Guest: So this so the your c CMMC plan
+[18:48:42] Guest: is to
+[18:48:46] Guest: I guess once you're kinda through this program is to
+[18:48:48] Guest: line up an auditor because I'm not
+[18:48:50] Guest: what
+[18:48:55] Guest: can you have can you book them in advance? Because I listened to a few
+[18:48:55] Guest: podcasts on this and read some material.
+[18:48:57] Guest: And
+[18:48:57] Guest: it looks like
+[18:48:58] Guest: It's not so much, like,
+[18:49:02] Guest: yes. You can book in advance. It's more like,
+[18:49:07] Guest: hey. It's like using any contractor.
+[18:49:08] Guest: Like, hey. I'm
+[18:49:10] Guest: hiring your services.
+[18:49:15] Guest: And I will be sending you a 100 parts and equipment
+[18:49:17] Guest: a 100 pieces of inventory
+[18:49:19] Guest: that we just manufactured
+[18:49:20] Guest: next week.
+[18:49:21] Guest: Can you have them done
+[18:49:22] Guest: a week?
+[18:49:24] Guest: That's kinda
+[18:49:28] Guest: The c m and senior level two is, like, more of, like, your internal
+[18:49:30] Guest: controls for all your CY. So you would
+[18:49:34] Guest: they from from what I've read, they are super backed up right now because
+[18:49:35] Guest: every other
+[18:49:39] Guest: defense contractor waited until the exact last moment
+[18:49:40] Guest: to get
+[18:49:42] Guest: certified so everyone's behind.
+[18:49:43] Guest: Yeah.
+[18:49:45] Guest: So all these contract all these
+[18:49:47] Guest: auditors or whatever you call them are
+[18:49:49] Guest: they're all, like, booked.
+[18:49:50] Guest: Here.
+[18:49:54] Guest: Yeah. So for for me specifically, the the guy I'm bringing on
+[18:49:55] Guest: Mhmm.
+[18:49:56] Guest: to my team, he is a
+[18:50:01] Guest: Hermel mid level executive, and we are going
+[18:50:04] Guest: to be using a lot of Carmel
+[18:50:10] Guest: assets. Right? So,
+[18:50:13] Guest: he's had fifteen plus years of experience. He wanted to do what I'm doing now,
+[18:50:14] Guest: Mhmm.
+[18:50:17] Guest: but he just never pulled the trigger. And so he's super excited to
+[18:50:21] Guest: for the dream, the vision, the goal. And
+[18:50:23] Guest: I'm building out a relationship with her, Mel,
+[18:50:28] Guest: to kinda clear the pathway on some of these things.
+[18:50:31] Guest: And while also giving them a lot of
+[18:50:33] Guest: money for contracts and stuff like that.
+[18:50:34] Guest: So
+[18:50:36] Guest: Thank you for answering that. I mean, it's
+[18:50:41] Guest: it's probably sounds weird coming from someone who just learned this stuff.
+[18:50:41] Guest: Yeah.
+[18:50:41] Guest: Yeah.
+[18:50:44] Guest: That, like, three days asking questions that are
+[18:50:46] Guest: like, why are you asking that question?
+[18:50:47] Guest: Yeah.
+[18:50:48] Guest: But it's just stuff that I'm just kinda diving in
+[18:50:49] Guest: Yeah.
+[18:50:50] Guest: as much as I can here.
+[18:50:54] Guest: Because where where do you like, with you asking me this question, do
+[18:50:55] Guest: where are you looking to
+[18:51:00] Guest: advertise your obviously, defense.
+[18:51:02] Guest: Right? But where are you looking to get in from a,
+[18:51:06] Guest: 30 to 30 to 75 person companies.
+[18:51:10] Guest: Because and here is my justification and you can poke holes in this if you
+[18:51:13] Guest: Yeah.
+[18:51:14] Guest: feel like you need to. My justification is that
+[18:51:17] Guest: as a 30 to 75 person company,
+[18:51:20] Guest: you don't yet have, like, a fully built out, like,
+[18:51:24] Guest: IT staff. You're probably running fairly lean on operationally.
+[18:51:25] Guest: Yeah.
+[18:51:27] Guest: And you're also
+[18:51:29] Guest: at the point where
+[18:51:31] Guest: you
+[18:51:36] Guest: like, you're probably overloaded, you're probably doing multiple jobs at the same time,
+[18:51:38] Guest: and you're stuck between
+[18:51:39] Guest: like, just started
+[18:51:42] Guest: and trying to
+[18:51:45] Guest: you know, be that 100 person or larger company.
+[18:51:46] Guest: Yeah.
+[18:51:50] Guest: So I'm going after people who are feeling the most pain with all the regulations. They don't
+[18:51:50] Guest: have
+[18:51:52] Guest: like, a huge staff to
+[18:51:56] Guest: to do all the paperwork and get all this stuff done.
+[18:51:57] Guest: Yeah.
+[18:51:59] Guest: So that's my initial, like,
+[18:52:00] Guest: brainstorm.
+[18:52:01] Guest: Yes.
+[18:52:02] Guest: You feel like that is
+[18:52:03] Guest: accurate,
+[18:52:06] Guest: I'm gonna put holes in it
+[18:52:06] Guest: like you said.
+[18:52:11] Guest: And this is from my experience in real estate and private equity and from my business teacher.
+[18:52:12] Guest: And mentors.
+[18:52:16] Guest: Why sell to why sell something for
+[18:52:21] Guest: why sell a $150,000 house when
+[18:52:22] Guest: it's gonna cost you the same time, energy, and effort
+
+--- Chunk 11 (138 entries) ---
+[18:52:24] Guest: to sell a million dollar house?
+[18:52:26] Guest: You know,
+[18:52:29] Guest: some of the best business models are luxury brands because
+[18:52:31] Guest: rich people have money.
+[18:52:33] Guest: Rich people can pay for it.
+[18:52:35] Guest: Rich people can afford it.
+[18:52:36] Guest: Think you're gonna be
+[18:52:38] Guest: well, yes, that's a good niche.
+[18:52:40] Guest: To get into.
+[18:52:45] Guest: For building out your project scope and, you know, learning as you go.
+[18:52:50] Guest: As you are, right, being a start up and stuff, I think you can do the same thing for
+[18:52:53] Guest: a bigger company that has the money that can pay for your
+[18:52:55] Guest: services,
+[18:52:58] Guest: doing the same thing. Because they don't know what they don't know.
+[18:53:01] Guest: And neither do you. Right? And so you're
+[18:53:05] Guest: you're gonna be figuring that out with them, and that's part of your your
+[18:53:10] Guest: your service. Right? It's like, hey. My AI is coming in to help you fix your shit.
+[18:53:12] Guest: And a part of that is me learning
+[18:53:14] Guest: and me learning with my AI.
+[18:53:17] Guest: How we're gonna fix your shit. So, like,
+[18:53:19] Guest: your your service and your set
+[18:53:20] Guest: selling
+[18:53:23] Guest: is going to do just that.
+[18:53:25] Guest: And so I would go after
+[18:53:27] Guest: bigger companies, bigger dollar amounts.
+[18:53:30] Guest: Specifically for that reason.
+[18:53:33] Guest: And those 30 to 75 person teams,
+[18:53:36] Guest: they might already be over overcumbered.
+[18:53:38] Guest: Right? And so, like,
+[18:53:39] Guest: my father-in-law
+[18:53:44] Guest: or my stepdad, perfect example, he's a software contract software engineer.
+[18:53:47] Guest: He works for a bunch of smaller teams,
+[18:53:52] Guest: who didn't know Adam from Eve. They didn't know their numbers. They
+[18:53:55] Guest: didn't have x, y, and z. And so when he went that
+[18:53:57] Guest: went to them and asked them for all their
+[18:53:59] Guest: resources and all their data,
+[18:54:02] Guest: they're like, oh, we want you to do that.
+[18:54:03] Guest: You know?
+[18:54:04] Guest: And
+[18:54:09] Guest: for him, he's like, no. That's that's not how this works. I need you guys to know your your business
+[18:54:10] Guest: and your numbers.
+[18:54:14] Guest: A software engineer. I'm gonna build this out based off what you give me.
+[18:54:19] Guest: I'm not your your research analyst, whatever.
+[18:54:19] Guest: So that that would be my
+[18:54:21] Guest: perspective.
+[18:54:21] Guest: You know?
+[18:54:24] Guest: I know you're looking at,
+[18:54:25] Guest: smaller, but
+[18:54:30] Guest: go go bigger. It's the same same dollar amount.
+[18:54:31] Guest: Same amount of headaches.
+[18:54:32] Guest: Just a bigger reward.
+[18:54:33] Guest: That's my thing.
+[18:54:36] Guest: That's good feedback. I appreciate that.
+[18:54:36] Guest: Yep.
+[18:54:42] Guest: Yeah. There was a
+[18:54:43] Guest: definitely a reason why I didn't wanna go after the under 30.
+[18:54:44] Guest: Yeah.
+[18:54:45] Guest: Yeah.
+[18:54:48] Guest: Companies is because they're in that exact situation that you just said where, like, they don't
+[18:54:51] Guest: just, like, trying to figure it out. They don't have a lot of money.
+[18:54:54] Guest: You know? They don't have a lot of ton of contracts.
+[18:54:54] Guest: Yeah.
+[18:54:55] Guest: They're just
+[18:54:55] Guest: don't
+[18:54:58] Guest: can't afford extra expenses here and there.
+[18:54:58] Guest: Yeah.
+[18:55:00] Guest: But
+[18:55:02] Guest: you know, in the larger companies,
+[18:55:06] Guest: I have to do some more research, but it seems like
+[18:55:11] Guest: Palantir and some of those other, like, big players are, like,
+[18:55:15] Guest: you know, we got the luxury brand here. Like, we'll take care of you.
+[18:55:16] Guest: Right.
+[18:55:18] Guest: You know, the entire entire platform.
+[18:55:18] Guest: Right.
+[18:55:19] Guest: It does everything.
+[18:55:20] Guest: Right.
+[18:55:20] Guest: So they're
+[18:55:22] Guest: they're looking at spending, you know,
+[18:55:25] Guest: half million dollars a year on a platform
+[18:55:31] Guest: Right.
+[18:55:31] Guest: from, like, Palantir where I can't compete with that out of the out of the gate. There's no way.
+[18:55:32] Guest: Right.
+[18:55:33] Guest: So
+[18:55:35] Guest: I guess I'm trying to identify and also,
+[18:55:37] Guest: I'm looking at
+[18:55:38] Guest: the
+[18:55:40] Guest: the actual software stack
+[18:55:41] Guest: Yeah.
+[18:55:42] Guest: is the other thing that I'm looking at.
+[18:55:44] Guest: And seeing that
+[18:55:46] Guest: cost point is
+[18:55:48] Guest: once you get above
+[18:55:49] Guest: a 100 people,
+[18:55:52] Guest: people stop using cost point. They use other platforms.
+[18:55:53] Guest: Yeah.
+[18:55:54] Guest: People hate Costpoint.
+[18:55:59] Guest: It's apparently I don't know anything about it.
+[18:55:59] Guest: Besides, everyone hates it because
+[18:56:02] Guest: yes, it functions, but it's built on, like,
+[18:56:04] Guest: Yeah.
+[18:56:04] Guest: nineties tech. Like, it's not
+[18:56:07] Guest: it's a pain to operate.
+[18:56:07] Guest: Yeah.
+[18:56:08] Guest: So
+[18:56:10] Guest: that is, like, the biggest
+[18:56:13] Guest: I'm looking for the biggest pain point
+[18:56:14] Guest: Yeah.
+[18:56:15] Guest: to solve.
+[18:56:18] Guest: I guess it's a balance between, like, how much money can you get
+[18:56:23] Guest: or what is the what is the pain that everyone's feeling that they can't
+[18:56:26] Guest: get out of? And, like, when when you say word the word cost point,
+[18:56:29] Guest: people like shutter if they're working on it.
+[18:56:31] Guest: Yeah. No. I hear you. I hear you.
+[18:56:33] Guest: That makes, perfect sense.
+[18:56:34] Guest: So
+[18:56:39] Guest: yeah, just what you thought. I do have to jump off here in, like, three, four minutes.
+[18:56:41] Guest: Just as a heads up, I gotta go to work. So
+[18:56:45] Guest: I'm good, you guys. What else anyone else have anything? Sorry for
+[18:56:47] Guest: dominating that last few minutes there.
+[18:56:50] Guest: Can we put out the
+[18:56:52] Guest: a time for tomorrow for you guys to do
+[18:56:54] Guest: your brief? Just put something in the group chat and figure out
+[18:56:56] Guest: when we can meet again.
+[18:56:58] Guest: Yeah. Do you guys wanna do the same time, or are you
+[18:57:01] Guest: earlier or later? What's your
+[18:57:04] Guest: I'm available starting at three tomorrow.
+[18:57:05] Guest: Okay.
+[18:57:07] Guest: Which would be
+[18:57:11] Guest: An hour. I'm central time, so you're mountain?
+[18:57:12] Guest: yeah.
+[18:57:12] Guest: I'm an hour ahead.
+[18:57:14] Guest: So that
+[18:57:16] Guest: That would be too.
+[18:57:17] Guest: I can't do two.
+[18:57:18] Guest: But
+[18:57:20] Guest: do two thirty if
+[18:57:21] Guest: I can't do
+[18:57:23] Guest: like,
+
+--- Chunk 12 (138 entries) ---
+[18:57:24] Guest: O'clock your time. I,
+[18:57:25] Guest: one thirty to
+[18:57:27] Guest: three thirty mountain.
+[18:57:33] Guest: I, I'm available in the morning in between pretty much like now.
+[18:57:36] Guest: But tomorrow, I'm taking a half day because of
+[18:57:39] Guest: class, whatever. So if we do, like,
+[18:57:44] Guest: six, 06:30, I can jump central time. I can jump on a phone call then too.
+[18:57:46] Guest: So either sometime in between
+[18:57:48] Guest: the morning and now,
+[18:57:49] Guest: and then fucking
+[18:57:52] Guest: like, six, 06:30 central.
+[18:57:56] Guest: 06:30AM.
+[18:57:57] Guest: PM.
+[18:58:01] Guest: Mean, if you guys wanna do AMs, you're fine, but
+[18:58:02] Guest: I
+[18:58:06] Guest: Tasha, what were you saying? What was your availability?
+[18:58:11] Guest: I was staying after three, but, it's because I have a meeting
+[18:58:12] Guest: okay.
+[18:58:17] Guest: That open that Open Call AI boot camp starts tomorrow. I think I'm gonna drop it because I'm like, I don't know that
+[18:58:21] Guest: I wanna do this. I thought it was, like, regular AI, not specifically Open Call.
+[18:58:22] Guest: I I haven't
+[18:58:23] Guest: But that just can
+[18:58:25] Guest: I I haven't found that
+[18:58:28] Guest: that's, like, ten to 11:30, and then I have, like, two separate meetings
+[18:58:31] Guest: So your your morning's a little busy?
+[18:58:31] Guest: before three. Yeah.
+[18:58:34] Guest: I mean, we can chip on a quick call right before
+[18:58:36] Guest: right before,
+[18:58:36] Guest: you know,
+[18:58:36] Guest: I'm fine with that.
+[18:58:37] Guest: Yeah. That'll work.
+[18:58:39] Guest: Fuel practice right before the
+[18:58:40] Guest: right before the event.
+[18:58:41] Guest: Yep.
+[18:58:41] Guest: Yeah.
+[18:58:43] Guest: I'm cool with that.
+[18:58:43] Guest: Cool.
+[18:58:44] Guest: Okay.
+[18:58:45] Guest: We'll do that then.
+[18:58:47] Guest: Little pregame
+[18:58:47] Guest: Yep.
+[18:58:54] Guest: I I feel like the webinars some of the webinars haven't been to ad
+[18:58:57] Guest: or I guess
+[18:59:01] Guest: yeah. I I haven't been a big fan of the
+[18:59:02] Guest: FI.
+[18:59:03] Guest: Webinars so far.
+[18:59:05] Guest: Trying to look,
+[18:59:09] Guest: by coding in AI, Anthropic has a ton of
+[18:59:10] Guest: free
+[18:59:13] Guest: I saw that.
+[18:59:14] Guest: I saw that.
+[18:59:18] Guest: directly on their site. They have, like, a
+[18:59:18] Guest: ton of courses. I haven't taken any.
+[18:59:19] Guest: Yeah.
+[18:59:20] Guest: But I've heard that they are
+[18:59:21] Guest: pretty good.
+[18:59:22] Guest: Okay.
+[18:59:24] Guest: Yeah.
+[18:59:26] Guest: Anthropic also just, filed a lawsuit against, the Pentagon.
+[18:59:29] Guest: Of course. Like, we knew this was gonna happen, like,
+[18:59:30] Guest: Yeah.
+[18:59:33] Guest: Yeah.
+[18:59:34] Guest: they're gonna do a lawsuit. They're gonna have to pay them out because you can't just
+[18:59:36] Guest: Right.
+[18:59:36] Guest: Yeah.
+[18:59:37] Guest: Right.
+[18:59:37] Guest: I
+[18:59:38] Guest: say you refuse to break the law so we're not gonna pay you. You still have to pay them.
+[18:59:38] Guest: Right.
+[18:59:42] Guest: and it's it's so true because,
+[18:59:43] Guest: like,
+[18:59:44] Guest: anthropic
+[18:59:47] Guest: Yeah.
+[18:59:47] Guest: is so much better than OpenAI technically.
+[18:59:48] Guest: I
+[18:59:48] Guest: I it's just
+[18:59:52] Guest: I mean, but this is this is politics. Like, you need politics and big money. Like, that's
+[18:59:53] Guest: I am not
+[18:59:56] Guest: Yeah.
+[18:59:58] Guest: surprised that that any of this is happening. Just pay them their money and let them go about their business.
+[19:00:00] Guest: I I feel like,
+[19:00:05] Guest: I'm waiting for the shoe to drop on OpenAI because I've been seeing all, like, their revenues
+[19:00:07] Guest: stuff, and they're like,
+[19:00:11] Guest: no money. You know what I mean? So I'm waiting for the shoe to drop, and, like,
+[19:00:14] Guest: open AI to go to shit. I don't maybe they'll get rescued, but
+[19:00:17] Guest: But they now that they get that government contract, they'll have a little little something to float on.
+[19:00:18] Guest: Yeah.
+[19:00:22] Guest: That is there that was, like, an act of desperation. They're, like, grasping it
+[19:00:25] Guest: We'll break the law. We'll do it.
+[19:00:25] Guest: They're, like, oh, it's probably the ball.
+[19:00:26] Guest: I'll break the law.
+[19:00:27] Guest: Do it.
+[19:00:28] Guest: Yeah.
+[19:00:32] Guest: Yeah. I mean, it's it's pretty wild because they're
+[19:00:38] Guest: OpenAI is almost going against all of these open source models.
+[19:00:40] Guest: Because we're, like,
+[19:00:41] Guest: Mean, but everything that they were founded on,
+[19:00:46] Guest: So I think this is a good lesson for us when there was, like,
+[19:00:48] Guest: whose model, you know, whose why, whose vision do you like? Like,
+[19:00:53] Guest: Yeah.
+[19:00:53] Guest: the ones that I like were the ones that have actually stuck
+[19:00:54] Guest: to it. Like, don't tell me that your vision and then you just
+[19:00:55] Guest: through everyone.
+[19:00:56] Guest: continue and do whatever
+[19:00:57] Guest: go against it.
+[19:01:02] Guest: I I like Palmer, Lucky and Andrew because
+[19:01:05] Guest: I I listen to a lot of podcasts, but their whole thing is, like,
+[19:01:07] Guest: we only want people
+[19:01:09] Guest: who are gonna
+[19:01:10] Guest: join in our vision.
+[19:01:14] Guest: Right? So if you believe in our vision, our dreams, our goals,
+[19:01:17] Guest: we want you. But if not, we don't want any other
+[19:01:18] Guest: bullshit or
+[19:01:19] Guest: Mhmm.
+[19:01:19] Guest: so I do like that.
+[19:01:25] Guest: Formed by all these people leaving OpenAI, I mean, because they were just so shady.
+[19:01:26] Guest: Yeah.
+[19:01:26] Guest: They, like,
+[19:01:29] Guest: like, we need to start our own thing because you are the worst company ever.
+[19:01:30] Guest: Yeah.
+[19:01:34] Guest: Unfortunately, they're, like, the only other Frontier model that is
+[19:01:38] Guest: like, available to use. Like, I looked into
+[19:01:41] Guest: Yeah.
+[19:01:42] Guest: Yeah.
+[19:01:56] Guest: all these different models. Llama is not fantastic. However, you can't use deep seek, you for government You can't use. You can't use any of these other models because they're all Chinese. And even though they're open all the weights are open source,
+[19:01:59] Guest: the government's just like, no. No. No. China, you stay over there.
+[19:02:00] Guest: Yeah.
+[19:02:01] Guest: It's
+[19:02:05] Guest: it's pretty wild that you're that we're locked down to
+[19:02:07] Guest: these two companies essentially
+[19:02:09] Guest: Llama and OpenAI.
+[19:02:10] Guest: Yeah.
+[19:02:11] Guest: OpenAI, I don't even think they're gonna
+[19:02:15] Guest: they're not approved yet. They might eventually be approved.
+[19:02:17] Guest: They will be here shortly.
+[19:02:17] Guest: Mhmm.
+[19:02:20] Guest: And which is, like, so shady. I mean, every
+[19:02:22] Guest: conversation
+
+--- Chunk 13 (92 entries) ---
+[19:02:28] Guest: AI got OpenAI got sued, and every conversation that anyone ever had with OpenAI is in a lawsuit right now.
+[19:02:29] Guest: Open like,
+[19:02:32] Guest: because they got sued by Elon and whatever.
+[19:02:35] Guest: And all their logs are public got
+[19:02:38] Guest: put into this court case. So anything you've typed into
+[19:02:40] Guest: OpenAI is in a court case right now.
+[19:02:42] Guest: Yeah. And so
+[19:02:45] Guest: did Sam Altman kill his cofounder? What
+[19:02:46] Guest: is
+[19:02:47] Guest: I
+[19:02:48] Guest: His cofounder died? What happened?
+[19:02:52] Guest: yeah. So he he had, like, a cofounder that
+[19:02:55] Guest: had a very mysterious death at the age of, like, something.
+[19:03:00] Guest: Got murdered in his home in a very secure gated community type
+[19:03:00] Guest: thing.
+[19:03:01] Guest: Like,
+[19:03:03] Guest: yeah. So it
+[19:03:03] Guest: I mean,
+[19:03:05] Guest: Wow.
+[19:03:07] Guest: who who is him or
+[19:03:08] Guest: someone,
+[19:03:09] Guest: Yeah.
+[19:03:09] Guest: you know,
+[19:03:10] Guest: wearing a
+[19:03:11] Guest: dark mask
+[19:03:12] Guest: Yeah.
+[19:03:12] Guest: type of thing.
+[19:03:13] Guest: Yeah. Yeah.
+[19:03:15] Guest: With nothing to gain. Because what did they get out of it?
+[19:03:18] Guest: Yeah. I I don't know. But
+[19:03:18] Guest: it's just an interesting,
+[19:03:19] Guest: you know,
+[19:03:22] Guest: Uncontrollable versus Sam Altman. Super evil, controllable.
+[19:03:22] Guest: Yeah.
+[19:03:23] Guest: Yeah.
+[19:03:26] Guest: Cool. We like it.
+[19:03:29] Guest: You know, with everything going on, it's just
+[19:03:33] Guest: like, yes, it's a very scary time. It's also a very exciting time.
+[19:03:36] Guest: It's also just, like, fun to watch. You know? I'm like,
+[19:03:37] Guest: shit.
+[19:03:37] Guest: You know what I mean?
+[19:03:43] Guest: And and local news, all the bases that,
+[19:03:45] Guest: I built overseas in Saudi have gotten blown up.
+[19:03:46] Guest: So there's that.
+[19:03:48] Guest: How's that deal?
+[19:03:55] Guest: It's surreal. Right? Like, I went I built
+[19:03:57] Guest: we built six spaces over there, and by 2020, we
+[19:03:58] Guest: tore out five of them.
+[19:03:59] Guest: Mhmm.
+[19:04:01] Guest: But all the places I
+[19:04:04] Guest: built, all those oil fields, refineries,
+[19:04:05] Guest: have been blown up now.
+[19:04:06] Guest: Mhmm.
+[19:04:10] Guest: And then PSAB is the large air force base that we built over there
+[19:04:15] Guest: is getting slapped pretty hard. So
+[19:04:15] Guest: it it's kinda weird.
+[19:04:16] Guest: But
+[19:04:21] Guest: same thing when we pulled out of Afghanistan and I was in Babura, I'm actually
+[19:04:23] Guest: saw that whole place being taken over by the Taliban.
+[19:04:24] Guest: Kinda.
+[19:04:24] Guest: Right.
+[19:04:27] Guest: Kinda rubbed me wrong because I had a buddy dialed
+[19:04:28] Guest: there, and I was like,
+[19:04:29] Guest: you know,
+[19:04:30] Guest: Yeah.
+[19:04:31] Guest: Yeah. What was it for?
+[19:04:31] Guest: That was
+[19:04:32] Guest: K.
+[19:04:32] Guest: Point.
+[19:04:32] Guest: Yeah.
+[19:04:34] Guest: yeah, that was very tough for a lot
+[19:04:35] Guest: a lot of
+[19:04:40] Guest: us and a lot of my friends were, like, working twenty four hours trying to get people out of Afghanistan.
+[19:04:41] Guest: Yeah.
+[19:04:43] Guest: That was, like,
+[19:04:47] Guest: super you you never know. Like, anybody that you work with, it's like,
+[19:04:48] Guest: Yeah.
+[19:04:52] Guest: they could be gone. You know that no clue where they are or what happened to them.
+[19:04:53] Guest: Yeah.
+[19:04:56] Guest: Yep.
+[19:04:58] Guest: So it's just fucked. Everything's fucked, and then we're just
+[19:04:59] Guest: you know, on a little bicycle
+[19:05:03] Guest: in fire, caught on fire just No. No. No. No. No.
+[19:05:04] Guest: So
+[19:05:05] Guest: Pretty much.
+[19:05:05] Guest: I
+[19:05:10] Guest: but but all is well. Alright.
+[19:05:13] Guest: I will talk to you guys tomorrow, six, 06:30, and, look forward to it.
+[19:05:15] Guest: Alright. Talk to you guys tomorrow.
+[19:05:16] Guest: Cool.
+[19:05:16] Guest: Sounds good. See you.
+[19:05:17] Guest: Peace.
