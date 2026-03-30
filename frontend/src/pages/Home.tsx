@@ -90,8 +90,7 @@ export default function Home() {
       });
       if (!res.ok) throw new Error('Failed to create room');
       const data = await res.json();
-      sessionStorage.setItem('participantName', name || user?.name || 'Guest');
-      navigate(`/room/${data.roomName}`);
+      navigate(`/lobby/${data.roomName}`, { state: { suggestedName: name || user?.name } });
     } catch (err) {
       console.error('Failed to create room:', err);
       setError('Failed to create meeting. Please try again.');
@@ -102,8 +101,7 @@ export default function Home() {
 
   const joinMeeting = () => {
     if (!joinCode.trim()) return;
-    sessionStorage.setItem('participantName', name || 'Guest');
-    navigate(`/room/${joinCode.trim()}`);
+    navigate(`/lobby/${joinCode.trim()}`, { state: { suggestedName: name } });
   };
 
   const scheduleMeeting = async (e: React.FormEvent) => {
@@ -157,8 +155,7 @@ export default function Home() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Failed to start meeting');
-      sessionStorage.setItem('participantName', user?.name || 'Host');
-      navigate(`/room/${meeting.roomName}`);
+      navigate(`/lobby/${meeting.roomName}`, { state: { suggestedName: user?.name } });
     } catch (err) {
       console.error('Failed to start meeting:', err);
     }

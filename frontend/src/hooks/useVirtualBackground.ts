@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BackgroundBlur, VirtualBackground, ProcessorWrapper } from '@livekit/track-processors';
 import type { LocalVideoTrack } from 'livekit-client';
-import { BackgroundOption, BACKGROUND_OPTIONS, STORAGE_KEY } from '../lib/backgrounds';
+import { BackgroundOption, BACKGROUND_OPTIONS, STORAGE_KEY, loadSavedBackground } from '../lib/backgrounds';
 
 // Preload image with CORS support for canvas processing
 const preloadImage = (url: string): Promise<HTMLImageElement> => {
@@ -14,17 +14,37 @@ const preloadImage = (url: string): Promise<HTMLImageElement> => {
   });
 };
 
-// Generate a data URL for a solid color (VirtualBackground only accepts image paths)
+const colorDataUrlCache = new Map<string, string>();
 const createColorDataUrl = (hexColor: string): string => {
+  const cached = colorDataUrlCache.get(hexColor);
+  if (cached) return cached;
   const canvas = document.createElement('canvas');
-  canvas.width = 1;
-  canvas.height = 1;
+  canvas.width = 640;
+  canvas.height = 480;
   const ctx = canvas.getContext('2d');
   if (ctx) {
     ctx.fillStyle = hexColor;
-    ctx.fillRect(0, 0, 1, 1);
+    ctx.fillRect(0, 0, 640, 480);
   }
-  return canvas.toDataURL('image/png');
+  const url = canvas.toDataURL('image/png');
+  colorDataUrlCache.set(hexColor, url);
+  return url;
+};
+
+const imageDataUrlCache = new Map<string, string>();
+const fetchImageAsDataUrl = async (url: string): Promise<string> => {
+  const cached = imageDataUrlCache.get(url);
+  if (cached) return cached;
+  const img = await preloadImage(url);
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Cannot create canvas context');
+  ctx.drawImage(img, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  imageDataUrlCache.set(url, dataUrl);
+  return dataUrl;
 };
 
 interface UseVirtualBackgroundOptions {
@@ -42,18 +62,7 @@ interface UseVirtualBackgroundReturn {
 export function useVirtualBackground({
   videoTrack,
 }: UseVirtualBackgroundOptions): UseVirtualBackgroundReturn {
-  const [currentBackground, setCurrentBackground] = useState<BackgroundOption>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return BACKGROUND_OPTIONS.find((opt) => opt.id === parsed.id) || BACKGROUND_OPTIONS[0];
-      } catch {
-        return BACKGROUND_OPTIONS[0];
-      }
-    }
-    return BACKGROUND_OPTIONS[0];
-  });
+  const [currentBackground, setCurrentBackground] = useState<BackgroundOption>(loadSavedBackground);
   const [isApplying, setIsApplying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentProcessor, setCurrentProcessor] = useState<ProcessorWrapper<any> | null>(null);
@@ -102,17 +111,11 @@ export function useVirtualBackground({
           const colorDataUrl = createColorDataUrl(option.value || '#334155');
           processor = VirtualBackground(colorDataUrl);
         } else if (option.type === 'image') {
-          // VirtualBackground with image URL - preload with CORS first
           if (!option.value) {
             throw new Error('Image URL is required for image backgrounds');
           }
-          // Preload the image to verify it's accessible and CORS-enabled
-          try {
-            await preloadImage(option.value);
-          } catch (preloadErr) {
-            throw new Error('Image could not be loaded. It may be blocked by CORS policy.');
-          }
-          processor = VirtualBackground(option.value);
+          const dataUrl = await fetchImageAsDataUrl(option.value);
+          processor = VirtualBackground(dataUrl);
         } else {
           throw new Error('Unknown background type: ' + option.type);
         }
