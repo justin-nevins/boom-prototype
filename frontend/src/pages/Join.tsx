@@ -61,8 +61,7 @@ export default function Join() {
 
   const joinRoom = () => {
     if (!name.trim()) return;
-    sessionStorage.setItem('participantName', name.trim());
-    navigate(`/room/${roomName}`);
+    navigate(`/lobby/${roomName}`, { state: { suggestedName: name.trim() } });
   };
 
   if (loading) {

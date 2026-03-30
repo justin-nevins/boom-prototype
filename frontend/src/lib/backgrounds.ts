@@ -27,3 +27,16 @@ export const BACKGROUND_OPTIONS: BackgroundOption[] = [
 ];
 
 export const STORAGE_KEY = 'boom-virtual-background';
+
+export function loadSavedBackground(): BackgroundOption {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      return BACKGROUND_OPTIONS.find((opt) => opt.id === parsed.id) || BACKGROUND_OPTIONS[0];
+    } catch {
+      return BACKGROUND_OPTIONS[0];
+    }
+  }
+  return BACKGROUND_OPTIONS[0];
+}
