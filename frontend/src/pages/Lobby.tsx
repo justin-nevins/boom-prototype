@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useMediaPreview } from '../hooks/useMediaPreview';
 import { STORAGE_KEY, BackgroundOption, loadSavedBackground } from '../lib/backgrounds';
@@ -18,7 +18,7 @@ export default function Lobby() {
     return state?.suggestedName || sessionStorage.getItem('participantName') || '';
   });
 
-  const { videoRef, isMicOn, isCamOn, toggleMic, toggleCam, error: mediaError } = useMediaPreview();
+  const { videoRef, stream, isMicOn, isCamOn, toggleMic, toggleCam, error: mediaError } = useMediaPreview();
 
   const [selectedBg, setSelectedBg] = useState<BackgroundOption>(loadSavedBackground);
 
@@ -27,13 +27,17 @@ export default function Lobby() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ id: option.id }));
   };
 
-  const joinRoom = () => {
+  const joinRoom = useCallback(() => {
     if (!name.trim()) return;
+    // Release camera/mic before LiveKit tries to acquire them
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+    }
     sessionStorage.setItem('participantName', name.trim());
     sessionStorage.setItem('boom-mic-enabled', String(isMicOn));
     sessionStorage.setItem('boom-cam-enabled', String(isCamOn));
     navigate(`/room/${roomName}`);
-  };
+  }, [name, stream, isMicOn, isCamOn, navigate, roomName]);
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">

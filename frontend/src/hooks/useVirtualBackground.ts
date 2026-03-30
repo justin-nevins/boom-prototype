@@ -143,9 +143,9 @@ export function useVirtualBackground({
     [videoTrack, currentProcessor]
   );
 
-  // Apply saved background when video track becomes available
+  // Auto-apply saved blur backgrounds when video track becomes available
   useEffect(() => {
-    if (videoTrack && currentBackground.type !== 'none' && !currentProcessor) {
+    if (videoTrack && currentBackground.type === 'blur' && !currentProcessor) {
       applyBackground(currentBackground).catch((err) => {
         console.error('Failed to auto-apply background, clearing:', err);
         // Clear saved preference if auto-apply fails
