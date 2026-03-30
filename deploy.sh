@@ -1,29 +1,37 @@
 #!/bin/bash
 # Boom Prototype Deployment Script
-# Deploys backend and ai-service to DigitalOcean droplet (do-stoic)
-# Frontend is served via Caddy on the same droplet
+# Deploys to DigitalOcean droplet (do-stoic)
+#
+# Usage: ./deploy.sh [backend|ai|frontend|all]
+#
+# Environment variables are read from the RUNNING containers on do-stoic,
+# not from a local .env file. This prevents config drift.
 
 set -e
 
 HOST="do-stoic"
 NETWORK="n8n-docker-caddy_default"
-REPO="https://github.com/Cato-Pine/boom-prototype.git"
-
-echo "=== Boom Prototype Deployment ==="
-echo ""
-
-# Read environment variables from .env
-if [ -f .env ]; then
-    source .env
-else
-    echo "Error: .env file not found"
-    exit 1
-fi
+REPO="https://github.com/justin-nevins/boom-prototype.git"
 
 COMPONENT="${1:-all}"
 
+echo "=== Boom Prototype Deployment ==="
+echo "Component: $COMPONENT"
+echo ""
+
+# Pull env vars from running containers on do-stoic
+load_backend_env() {
+    eval "$(ssh "$HOST" "docker inspect boom-backend --format '{{range .Config.Env}}export {{.}}\n{{end}}' 2>/dev/null" | grep -E '^export (LIVEKIT_|SMTP_|JWT_|BOOM_|DEEPGRAM_|ANTHROPIC_)' )"
+}
+
+load_ai_env() {
+    eval "$(ssh "$HOST" "docker inspect boom-ai --format '{{range .Config.Env}}export {{.}}\n{{end}}' 2>/dev/null" | grep -E '^export (LIVEKIT_|DEEPGRAM_|ANTHROPIC_)' )"
+}
+
 deploy_backend() {
     echo "=== Deploying Backend ==="
+    load_backend_env
+    echo "Using LIVEKIT_URL=$LIVEKIT_URL"
     ssh "$HOST" bash -s <<REMOTE
         set -e
         cd /tmp
@@ -57,6 +65,8 @@ REMOTE
 
 deploy_ai() {
     echo "=== Deploying AI Service ==="
+    load_ai_env
+    echo "Using LIVEKIT_URL=$LIVEKIT_URL"
     ssh "$HOST" bash -s <<REMOTE
         set -e
         cd /tmp
@@ -84,6 +94,8 @@ REMOTE
 
 deploy_frontend() {
     echo "=== Deploying Frontend ==="
+    load_backend_env
+    echo "Using LIVEKIT_URL=$LIVEKIT_URL"
     ssh "$HOST" bash -s <<REMOTE
         set -e
         cd /tmp
