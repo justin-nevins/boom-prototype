@@ -153,7 +153,7 @@ export default function Lobby() {
                   onSelect={handleSelectBg}
                 />
                 <p className="text-slate-500 text-xs mt-2">
-                  {selectedBg.label}
+                  {selectedBg.type === 'none' ? selectedBg.label : `${selectedBg.label} - applied when you join`}
                 </p>
               </div>
 

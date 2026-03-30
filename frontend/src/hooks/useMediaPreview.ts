@@ -24,7 +24,7 @@ export function useMediaPreview(): UseMediaPreviewReturn {
     const init = async () => {
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: { width: 640, height: 480, frameRate: 24 },
           audio: true,
         });
         if (!active) {
