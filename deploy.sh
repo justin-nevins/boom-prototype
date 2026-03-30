@@ -21,11 +21,23 @@ echo ""
 
 # Pull env vars from running containers on do-stoic
 load_backend_env() {
-    eval "$(ssh "$HOST" "docker inspect boom-backend --format '{{range .Config.Env}}export {{.}}\n{{end}}' 2>/dev/null" | grep -E '^export (LIVEKIT_|SMTP_|JWT_|BOOM_|DEEPGRAM_|ANTHROPIC_)' )"
+    eval "$(ssh "$HOST" "docker inspect boom-backend --format '{{json .Config.Env}}'" | python3 -c "
+import json, sys
+for e in json.load(sys.stdin):
+    k, v = e.split('=', 1)
+    if any(k.startswith(p) for p in ['LIVEKIT_','SMTP_','JWT_','BOOM_','DEEPGRAM_','ANTHROPIC_']):
+        print(f'export {k}=\"{v}\"')
+")"
 }
 
 load_ai_env() {
-    eval "$(ssh "$HOST" "docker inspect boom-ai --format '{{range .Config.Env}}export {{.}}\n{{end}}' 2>/dev/null" | grep -E '^export (LIVEKIT_|DEEPGRAM_|ANTHROPIC_)' )"
+    eval "$(ssh "$HOST" "docker inspect boom-ai --format '{{json .Config.Env}}'" | python3 -c "
+import json, sys
+for e in json.load(sys.stdin):
+    k, v = e.split('=', 1)
+    if any(k.startswith(p) for p in ['LIVEKIT_','DEEPGRAM_','ANTHROPIC_']):
+        print(f'export {k}=\"{v}\"')
+")"
 }
 
 deploy_backend() {
