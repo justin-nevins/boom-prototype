@@ -53,11 +53,7 @@ export default function Room() {
   const [processingNotes, setProcessingNotes] = useState(false);
 
   useEffect(() => {
-    const participantName = sessionStorage.getItem('participantName');
-    if (!participantName) {
-      navigate(`/lobby/${roomName}`, { replace: true });
-      return;
-    }
+    const participantName = sessionStorage.getItem('participantName') || 'Guest';
 
     // Get token from backend
     fetch(`${BACKEND_URL}/api/token`, {

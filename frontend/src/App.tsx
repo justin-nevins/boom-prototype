@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import Room from './pages/Room';
 import Login from './pages/Login';
 import Join from './pages/Join';
-import Lobby from './pages/Lobby';
 import './index.css';
 
 export default function App() {
@@ -15,7 +14,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join/:roomName" element={<Join />} />
-          <Route path="/lobby/:roomName" element={<Lobby />} />
           <Route path="/room/:roomName" element={<Room />} />
         </Routes>
       </BrowserRouter>
