@@ -21,10 +21,16 @@ export default function Lobby() {
   const { videoRef, stream, isMicOn, isCamOn, toggleMic, toggleCam, error: mediaError } = useMediaPreview();
 
   const [selectedBg, setSelectedBg] = useState<BackgroundOption>(loadSavedBackground);
+  const [customBgs, setCustomBgs] = useState<BackgroundOption[]>([]);
 
   const handleSelectBg = (option: BackgroundOption) => {
     setSelectedBg(option);
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ id: option.id }));
+  };
+
+  const handleUploadBg = (option: BackgroundOption) => {
+    setCustomBgs((prev) => [...prev, option]);
+    handleSelectBg(option);
   };
 
   const joinRoom = useCallback(() => {
@@ -151,6 +157,8 @@ export default function Lobby() {
                 <BackgroundOptionGrid
                   selectedId={selectedBg.id}
                   onSelect={handleSelectBg}
+                  customBackgrounds={customBgs}
+                  onUpload={handleUploadBg}
                 />
                 <p className="text-slate-500 text-xs mt-2">
                   {selectedBg.type === 'none' ? selectedBg.label : `${selectedBg.label} - applied when you join`}

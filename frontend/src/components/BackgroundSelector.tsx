@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocalParticipant } from '@livekit/components-react';
 import { LocalVideoTrack } from 'livekit-client';
 import { BackgroundOption } from '../lib/backgrounds';
@@ -10,6 +11,7 @@ interface BackgroundSelectorProps {
 
 export default function BackgroundSelector({ onClose }: BackgroundSelectorProps) {
   const { localParticipant } = useLocalParticipant();
+  const [customBgs, setCustomBgs] = useState<BackgroundOption[]>([]);
 
   const videoTrack = localParticipant
     .getTrackPublications()
@@ -53,6 +55,11 @@ export default function BackgroundSelector({ onClose }: BackgroundSelectorProps)
           selectedId={currentBackground.id}
           onSelect={handleSelect}
           disabled={isApplying}
+          customBackgrounds={customBgs}
+          onUpload={(option) => {
+            setCustomBgs((prev) => [...prev, option]);
+            handleSelect(option);
+          }}
         />
 
         <div className="mt-3 text-center">
